@@ -1,6 +1,13 @@
 /*
 	copyright 2012 clay graham. NO WARRANTIES PROVIDED
 */
+/* things we like */
+if (typeof String.prototype.startsWith != 'function') {
+  String.prototype.startsWith = function (str){
+    return this.indexOf(str) == 0;
+  };
+}
+
 if (!window.WELOCALLY) {
     window.WELOCALLY = {
     	env: {
@@ -89,6 +96,31 @@ if (!window.WELOCALLY) {
 			},
 			replaceAll: function(txt, replace, with_this) {
 				  return txt.replace(new RegExp(replace, 'g'),with_this);
+			},
+			startsWith: function(sourceString, startsWith) {
+				  return sourceString.indexOf(startsWith) == 0;
+			},
+			getParameter: function ( queryString, parameterName ) {
+				   // Add "=" to the parameter name (i.e. parameterName=value)
+				   var parameterName = parameterName + "=";
+				   if ( queryString.length > 0 ) {
+				      // Find the beginning of the string
+				      begin = queryString.indexOf ( parameterName );
+				      // If the parameter name is not found, skip it, otherwise return the value
+				      if ( begin != -1 ) {
+				         // Add the length (integer) to the beginning
+				         begin += parameterName.length;
+				         // Multiple parameters are separated by the "&" sign
+				         end = queryString.indexOf ( "&" , begin );
+				      if ( end == -1 ) {
+				         end = queryString.length
+				      }
+				      // Return the string
+				      return unescape ( queryString.substring ( begin, end ) );
+				   }
+				   // Return "null" if no parameter has been found
+				   return "null";
+				   }
 			}
 			
 			

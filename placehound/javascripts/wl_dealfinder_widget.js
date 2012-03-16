@@ -1,10 +1,6 @@
 /*
 	copyright 2012 clay graham. NO WARRANTIES PROVIDED
 */
-if (!window.WELOCALLY) {
-    window.WELOCALLY = {
-    }
-}
 
 //http://localhost:8082/geodb/deal/1_0/search.json?q=*:*&loc=37.8113159_-122.26822449999997&radiusKm=30
 function WELOCALLY_DealFinderWidget (cfg) {		
@@ -50,46 +46,12 @@ function WELOCALLY_DealFinderWidget (cfg) {
 			jQuery(this.wrapper).append(this.slides);			
 			
 			jQuery(script).parent().before(this.wrapper);
+			
+			return this;
 		
-		}
+		};
 }
 
-/*
-[
-    {
-        "startDate": 1331166957000,
-        "location": {
-            "phoneNumber": "(415) 374-9294",
-            "address": "215 Fremont Street",
-            "zipCode": "95105",
-            "name": "Anthropos Performance",
-            "state": "CA",
-            "longitude": -122.394299,
-            "latitude": 37.789139,
-            "city": "San Francisco"
-        },
-        "smallImageUrl": "http://www.signpost.com/media/BAhbB1sHOgZmSSIzMjAxMS8xMi8xNC8xNy8xMC8yOS85MTQvQ3JvcHBlckNhcHR1cmVfMjRfLmpwZwY6BkVUWwk6BnA6DGNvbnZlcnRJIhIgLXNjYWxlIDQ1eDQ1BjsGRjA",
-        "endDate": 1331508957000,
-        "available": 15,
-        "savings": 50,
-        "url": "http://signpost.go2cloud.org/aff_c?offer_id=516&aff_id=1286&url=http%3A%2F%2Fwww.signpost.com%2Fdeals%2Fsan-francisco-ca%2Fanthroposperformance-com%2F50-for-introductory-personal-training-sessions%2F447%3Futm_source%3Dhasoffers-1286%26utm_medium%3Daffiliate%26utm_campaign%3Dsan-francisco-ca%26utm_content%3Danthroposperformance-com",
-        "distance": 11.348207197610375,
-        "title": "jQuery50 for Introductory Personal Training Sessions",
-        "price": 50,
-        "_id": "WLD_b4krrih2hd17v2k44ca5a4_37.789139_-122.394299@1331238112",
-        "percentageDiscount": 50,
-        "details": "So, how did you do on your fitness goals for 2011? Were you able to find that great workout and\nstick to it? If not, we have a great deal for you from Anthropos Performance. They are offering 2\nspecial introductory personal training sessions for just jQuery50. This is 50% off the normal price of jQuery100.\nAnthropos is located in San Francisco and focuses on kettlebell and barbell training for health and\nfitness. The trainers at Anthropos provide guidance to help you achieve your fitness goals, lose fat\nand build muscle, which results in increased strength and health. They seek to bridge the divide\nbetween what the elite trainers and academics know, and what the general population typically\nemploys to achieve health and fitness. They filter the high-level technical information down to\npracticable approaches that work. Now is a great time to take your fitness seriously. Are you commit to your health and wellness? If so, the team at Anthropos\nPerformance can help.",
-        "signpostId": "447",
-        "value": 100,
-        "largeImageUrl": "http://www.signpost.com/media/BAhbB1sHOgZmSSIzMjAxMS8xMi8xNC8xNy8xMC8yOS85MTQvQ3JvcHBlckNhcHR1cmVfMjRfLmpwZwY6BkVUWwk6BnA6DGNvbnZlcnRJIhQgLXNjYWxlIDE5MHgxOTAGOwZGMA",
-        "voucherExprirationDate": 1342058400000,
-        "categories": [],
-        "quantity": 50,
-        "mediumImageUrl": "http://www.signpost.com/media/BAhbB1sHOgZmSSIzMjAxMS8xMi8xNC8xNy8xMC8yOS85MTQvQ3JvcHBlckNhcHR1cmVfMjRfLmpwZwY6BkVUWwk6BnA6DGNvbnZlcnRJIhIgLXNjYWxlIDk1eDk1BjsGRjA",
-        "sold": 0
-    }
-]
-*/
 WELOCALLY_DealFinderWidget.prototype.setLocation = function(lat, lng) {
 
 	var query = {

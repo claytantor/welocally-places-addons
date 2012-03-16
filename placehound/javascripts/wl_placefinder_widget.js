@@ -1,11 +1,10 @@
 /*
-	copyright 2012 clay graham. NO WARRANTIES PROVIDED
+	copyright 2012 welocally. NO WARRANTIES PROVIDED
 */
 
 if (!window.WELOCALLY) {
     window.WELOCALLY = { }
 }
-
 
 if (!WELOCALLY.PlaceFinderWidget) {
     WELOCALLY.PlaceFinderWidget = function(cfg) {
@@ -15,7 +14,11 @@ if (!WELOCALLY.PlaceFinderWidget) {
     			WELOCALLY.PlaceFinderWidget._cfg = cfg;
     			
     			if(!cfg.endpoint){
-    				WELOCALLY.PlaceFinderWidget._cfg.endpoint='http://stage.welocally.com'
+    				WELOCALLY.PlaceFinderWidget._cfg.endpoint='http://stage.welocally.com';
+    			}
+    			
+    			if(!cfg.imagePath){
+    				WELOCALLY.PlaceFinderWidget._cfg.imagePath='http://placehound.com/images';
     			}
     			
     			WELOCALLY.PlaceFinderWidget._observers = cfg.observers;
@@ -92,6 +95,8 @@ if (!WELOCALLY.PlaceFinderWidget) {
     	
     	var buttonDiv = jQuery('<div></div>').attr('class','wl_button_holder'); 	
     	var fetchButton = jQuery('<button>Search</div>');
+    	
+    	jQuery(fetchButton).attr('class','wl_finder_search');
     	jQuery(fetchButton).bind('click' , WELOCALLY.PlaceFinderWidget.searchHandler);
     	jQuery(buttonDiv).append(fetchButton); 
     	jQuery(wrapper).append(buttonDiv);  
@@ -218,8 +223,8 @@ if (!WELOCALLY.PlaceFinderWidget) {
 				this.item;
 		}
 		
-				
-		jQuery(WELOCALLY.PlaceFinderWidget._selectedSection)
+		if(WELOCALLY.PlaceFinderWidget._cfg.showSelection){
+			jQuery(WELOCALLY.PlaceFinderWidget._selectedSection)
 			.append('<div class="wl_selected_name">'+WELOCALLY.PlaceFinderWidget._selectedPlace.properties.name+'</div>')
 			.append('<div class="wl_selected_adress">'+WELOCALLY.PlaceFinderWidget._selectedPlace.properties.address+' '+
 				WELOCALLY.PlaceFinderWidget._selectedPlace.properties.city+
@@ -227,51 +232,63 @@ if (!WELOCALLY.PlaceFinderWidget) {
 				' '+WELOCALLY.PlaceFinderWidget._selectedPlace.properties.postcode+'</div>');
 					
 			
-		if(WELOCALLY.PlaceFinderWidget._selectedPlace.properties.phone != null) {
-			jQuery(WELOCALLY.PlaceFinderWidget._selectedSection)
-				.append('<div class="wl_selected_phone">'+WELOCALLY.PlaceFinderWidget._selectedPlace.properties.phone+'</div>');
-		}
-
-		if(WELOCALLY.PlaceFinderWidget._selectedPlace.properties.website != null && 
-			WELOCALLY.PlaceFinderWidget._selectedPlace.properties.website != '' ) {
-			var website = WELOCALLY.PlaceFinderWidget._selectedPlace.properties.website;
-			if(WELOCALLY.PlaceFinderWidget._selectedPlace.properties.website.indexOf('http://') == -1) {
-				website = 'http://'+WELOCALLY.PlaceFinderWidget._selectedPlace.properties.website;				
+			if(WELOCALLY.PlaceFinderWidget._selectedPlace.properties.phone != null) {
+				jQuery(WELOCALLY.PlaceFinderWidget._selectedSection)
+					.append('<div class="wl_selected_phone">'+WELOCALLY.PlaceFinderWidget._selectedPlace.properties.phone+'</div>');
 			}
-			
-			jQuery(WELOCALLY.PlaceFinderWidget._selectedSection)
-				.append('<div class="wl_selected_web"><a target="_new" href="'+website+'">'+website+'</a></div>');
-
-		} 
-
-		if(WELOCALLY.PlaceFinderWidget._selectedPlace.properties.city != null && 
-			WELOCALLY.PlaceFinderWidget._selectedPlace.properties.province != null){
-				var qS = WELOCALLY.PlaceFinderWidget._selectedPlace.properties.city+" "+
-					WELOCALLY.PlaceFinderWidget._selectedPlace.properties.province;
-				if(WELOCALLY.PlaceFinderWidget._selectedPlace.properties.address != null)
-					qs=WELOCALLY.PlaceFinderWidget._selectedPlace.properties.address+" "+qS;
-				if(WELOCALLY.PlaceFinderWidget._selectedPlace.properties.postcode != null)
-					qs=qs+" "+WELOCALLY.PlaceFinderWidget._selectedPlace.properties.postcode;
-				var qVal = qs.replace(" ","+");
+	
+			if(WELOCALLY.PlaceFinderWidget._selectedPlace.properties.website != null && 
+				WELOCALLY.PlaceFinderWidget._selectedPlace.properties.website != '' ) {
+				var website = WELOCALLY.PlaceFinderWidget._selectedPlace.properties.website;
+				if(WELOCALLY.PlaceFinderWidget._selectedPlace.properties.website.indexOf('http://') == -1) {
+					website = 'http://'+WELOCALLY.PlaceFinderWidget._selectedPlace.properties.website;				
+				}
 				
 				jQuery(WELOCALLY.PlaceFinderWidget._selectedSection)
-				.append('<div class="wl_selected_driving"><a href="http://maps.google.com/maps?f=d&source=s_q&hl=en&geocode=&q='+
-					qVal+'" target="_new">Driving Directions</a></div>');
-			
-		}
-		 
-		//the tag
-		var tag = '[welocally id="'+WELOCALLY.PlaceFinderWidget._selectedPlace._id+'" /]';
-		var inputArea = jQuery('<input/>');
-		jQuery(inputArea).val(tag);
-		var wlSelectedTagArea = jQuery('<div class="wl_selected_tag"></div>');
-		jQuery(wlSelectedTagArea).append(inputArea);
-		 
-		jQuery(WELOCALLY.PlaceFinderWidget._selectedSection)
-		 		.append(wlSelectedTagArea)
-				.show();
+					.append('<div class="wl_selected_web"><a target="_new" href="'+website+'">'+website+'</a></div>');
+	
+			} 
+	
+			if(WELOCALLY.PlaceFinderWidget._selectedPlace.properties.city != null && 
+				WELOCALLY.PlaceFinderWidget._selectedPlace.properties.province != null){
+					var qS = WELOCALLY.PlaceFinderWidget._selectedPlace.properties.city+" "+
+						WELOCALLY.PlaceFinderWidget._selectedPlace.properties.province;
+					if(WELOCALLY.PlaceFinderWidget._selectedPlace.properties.address != null)
+						qs=WELOCALLY.PlaceFinderWidget._selectedPlace.properties.address+" "+qS;
+					if(WELOCALLY.PlaceFinderWidget._selectedPlace.properties.postcode != null)
+						qs=qs+" "+WELOCALLY.PlaceFinderWidget._selectedPlace.properties.postcode;
+					var qVal = qs.replace(" ","+");
+					
+					jQuery(WELOCALLY.PlaceFinderWidget._selectedSection)
+					.append('<div class="wl_selected_driving"><a href="http://maps.google.com/maps?f=d&source=s_q&hl=en&geocode=&q='+
+						qVal+'" target="_new">Driving Directions</a></div>');
+				
+			}
+			 
+			//the tag
+			var tag = '[welocally id="'+WELOCALLY.PlaceFinderWidget._selectedPlace._id+'" /]';
+			var inputArea = jQuery('<input/>');
+			jQuery(inputArea).val(tag);
+			var wlSelectedTagArea = jQuery('<div class="wl_selected_tag"></div>');
+			jQuery(wlSelectedTagArea).append(inputArea);
+			 
+			jQuery(WELOCALLY.PlaceFinderWidget._selectedSection)
+			 		.append(wlSelectedTagArea)
+					.show();
 		
-		 console.log('selected:'+WELOCALLY.PlaceFinderWidget._selectedPlace.properties.name);
+		}
+		
+		
+		//broadcast to listeners
+		if(WELOCALLY.PlaceFinderWidget._observers != null && WELOCALLY.PlaceFinderWidget._observers.length>0){
+			jQuery.each(WELOCALLY.PlaceFinderWidget._observers, function(i,item){
+				if(item instanceof WELOCALLY_PlaceSelectionListener){
+					item.show(WELOCALLY.PlaceFinderWidget._selectedPlace);
+				}						
+			});
+		}
+		
+		console.log('selected:'+WELOCALLY.PlaceFinderWidget._selectedPlace.properties.name);
 
 	};
 	
@@ -344,7 +361,9 @@ if (!WELOCALLY.PlaceFinderWidget) {
 				//broadcast to listeners
 				if(WELOCALLY.PlaceFinderWidget._observers != null && WELOCALLY.PlaceFinderWidget._observers.length>0){
 					jQuery.each(WELOCALLY.PlaceFinderWidget._observers, function(i,item){
-						item.setLocation(results[0].geometry.location.lat(), results[0].geometry.location.lng());
+						if(item instanceof WELOCALLY_DealFinderWidget){
+							item.setLocation(results[0].geometry.location.lat(), results[0].geometry.location.lng());
+						}						
 					});
 				}
 							
@@ -418,7 +437,7 @@ if (!WELOCALLY.PlaceFinderWidget) {
 								WELOCALLY.PlaceFinderWidget._map,
 								itemLocation,
 								item,
-								'/images/marker_place_'+WELOCALLY.PlaceFinderWidget.colName(i)+'.png');
+								WELOCALLY.PlaceFinderWidget._cfg.imagePath+'/marker_place_'+WELOCALLY.PlaceFinderWidget.colName(i)+'.png');
 							
 							//add result to list
 							var listItem = WELOCALLY.PlaceFinderWidget.makeItemContents(item,i);
@@ -454,7 +473,7 @@ if (!WELOCALLY.PlaceFinderWidget) {
 		var wrapper = jQuery('<li></il>');
 		jQuery(wrapper)
 			.append(jQuery('<img class="selectable_marker" src='+
-				'/images/marker_place_'+
+					WELOCALLY.PlaceFinderWidget._cfg.imagePath+'/marker_place_'+
 				WELOCALLY.PlaceFinderWidget.colName(i)+'.png'+' />'))
 			.append(jQuery('<div class="selectable_title">'+
 				item.properties.name+'</div>'))
@@ -535,8 +554,8 @@ if (!WELOCALLY.PlaceFinderWidget) {
 				WELOCALLY.PlaceFinderWidget.addLocationMarker(
 					WELOCALLY.PlaceFinderWidget._map,
 					location,
-					'/images/marker_search.png');		
-	}
+					WELOCALLY.PlaceFinderWidget._cfg.imagePath+'/marker_search.png');		
+	};
 	
 	// Shows any overlays currently in the array
 	WELOCALLY.PlaceFinderWidget.showOverlays =function (markersArray, map) {
@@ -583,9 +602,7 @@ if (!WELOCALLY.PlaceFinderWidget) {
 	  google.maps.event.addListener(marker, 'click', WELOCALLY.PlaceFinderWidget.selectedItemHandler);
 	  markersArray.push(marker);
 	};
-	
-	
-	
+		
 	// Removes the overlays from the map, but keeps them in the array
 	WELOCALLY.PlaceFinderWidget.clearOverlays = function (markersArray) {
 	  if (markersArray) {

@@ -4,7 +4,6 @@
 <head>
   	<title>Place Hound</title>
   	<META NAME="description" CONTENT="Place Hound is just a simple way to search for places. powered by Welocally">
-  	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/smoothness/jquery-ui.css"  type="text/css" />
   	<link rel="stylesheet" href="stylesheets/style.css" type="text/css" />
   	<link href='https://fonts.googleapis.com/css?family=Fresca|Asap' rel='stylesheet' type='text/css'>
   	<link rel="icon" type="image/png" href="images/hound_icon.png">  	
@@ -12,7 +11,6 @@
     <script src="javascripts/wl_place_widget.js" type="text/javascript"></script>
     <script src="javascripts/wl_dealfinder_widget.js" type="text/javascript"></script> 
     <script src="javascripts/wl_placefinder_widget.js" type="text/javascript"></script>
-    <script src="javascripts/wl_place_selection_listener.js" type="text/javascript"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" 
     	type="text/javascript"></script>
 	<script src=
@@ -33,67 +31,51 @@
 					<script type="text/javascript" src="http://openlike.org/v1/openlike.js"></script>
 					<script type="text/javascript">OPENLIKE.Widget({header:''})</script>
 		  		</div>
-		  </div>
-		  
+		  </div>		  
       </div>
-      <div class="placehound_intro">Place hound is just a simple way to find places in the United States. Tell the
-      hound where to look and what your are looking for and he will fetch you some great
-      places! Got <a href="http://welocally.com/?page_id=2" target="_new">Welocally Places</a> for <a href="http://wordpress.org/extend/plugins/welocally-places/" target="_new">WordPress</a>? Just select map markers or results to embed the place into your 
-      site using our simple tags.</div>
-    </div>
-
-    <div class="clear-left"></div>
-  	<div id="dialog-modal" class="wl_placehound_dialog"></div>
+	</div>
+	<div class="placehound_title" style="margin-top:20px;">Place</div>
     <div id="main">
-    <script type="text/javascript">
+      <script type="text/javascript">
 //<![CDATA[
-      var observerDeals = new WELOCALLY_DealFinderWidget({}).init();
       
-	  var placeDialog = jQuery( '#dialog-modal' );	  
-	  jQuery( placeDialog )
-	  .attr('font-size','0.8em')
-	  .attr('font-family','Asap')
-	  .dialog({
-			height: 600,
-			width: 600,
-			modal: true,
-			autoOpen: false
-	  });
-	
-      var observerPlace = new WELOCALLY_PlaceSelectionListener(
-    	    {endpoint:'http://gaudi-vb/placehound',dialog:placeDialog})
-      		.init();
-	  
-      WELOCALLY.PlaceFinderWidget({ 
-      	zoom:4, 
-      	loc:'38.548165_-96.064453', 
-      	radiusKm:'20', 
-      	observers: [ observerDeals,observerPlace ],
-      	styles: [
-		  {
-			stylers: [
-			  { saturation: -45 }
-			]
-		  },{
-			featureType: "road",
-			stylers: [
-			  { hue: "#ff5500" }
-			]
-		  },{
-			featureType: "water",
-			stylers: [
-			  { hue: "#ffa200" },
-			  { lightness: -55 }
-			]
-		  },{
-			featureType: "poi.park",
-			stylers: [
-			  { hue: "#ffc300" },
-			  { lightness: 14 },
-			  { saturation: 21 }
-			]
-		  }
-		]  }); 
+	    var cfg = {
+	    		endpoint:'http://localhost:8082',
+	    		showShare: true,
+	    		styles: [
+						  {
+							stylers: [
+							  { saturation: -45 }
+							]
+						  },{
+							featureType: "road",
+							stylers: [
+							  { hue: "#ff5500" }
+							]
+						  },{
+							featureType: "water",
+							stylers: [
+							  { hue: "#ffa200" },
+							  { lightness: -55 }
+							]
+						  },{
+							featureType: "poi.park",
+							stylers: [
+							  { hue: "#ffc300" },
+							  { lightness: 14 },
+							  { saturation: 21 }
+							]
+						  }
+						]
+	    	    };
+	    cfg.id = WELOCALLY.util.getParameter(
+				window.location.search.substring(1),
+				'id');
+
+	    var observerPlace = 
+			  new WELOCALLY_PlaceWidget(cfg)
+		  		.init();	          
+	 
       //]]>
       </script>
     </div>
