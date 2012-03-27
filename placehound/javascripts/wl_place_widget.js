@@ -21,7 +21,7 @@ function WELOCALLY_PlaceWidget (cfg) {
 		}
 		
 		if (!cfg.imagePath) {
-			cfg.imagePath = 'http://placehound.com/images';
+			cfg.imagePath = 'http://placehound.com/images/marker_all_base.png';
 		}
 		
 		if (!cfg.zoom) {
@@ -122,10 +122,14 @@ WELOCALLY_PlaceWidget.prototype.initMapForPlace = function(place, map_canvas) {
     	map_canvas, 
     	options);
     
+    var markerIcon = 
+		new google.maps.MarkerImage(_instance._cfg.imagePath, new google.maps.Size(32, 32), new google.maps.Point(32, 0));
+
+    
     var marker = new google.maps.Marker({
     	position: latlng,
     	map: map,
-    	icon: _instance.cfg.imagePath+'/marker_search.png'
+    	icon: markerIcon
       });
         
     jQuery(map_canvas).show();

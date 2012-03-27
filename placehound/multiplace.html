@@ -15,6 +15,7 @@
 		"https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js" type=
 		"text/javascript"></script>
 
+	<link rel="stylesheet" href="stylesheets/placehound.css" type="text/css" />
     <script src="javascripts/0.8.1/wl_base.js" type="text/javascript"></script> 
     <script src="javascripts/0.8.1/wl_place_widget.js" type="text/javascript"></script>  
     <script src="javascripts/0.8.1/wl_infobox.js" type="text/javascript"></script> 
@@ -35,9 +36,11 @@
       	var placeSelected = new WELOCALLY_PlaceWidget({}).init();
 	    var cfg = { 
 				id:'multi_1',
-				imagePath: 'http://gaudi-vb/placehound/images',
+				imagePath: 'http://gaudi-vb/placehound/images/marker_all_base.png',
 		    	endpoint:'http://stage.welocally.com',
 		    	showSelection: true,
+		    	showLetters: true,
+		    	overrideSelectableStyle: 'width: 98%;',
 		    	observers:[placeSelected],
 				places: [
 				         {

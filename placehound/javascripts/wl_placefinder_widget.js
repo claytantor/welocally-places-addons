@@ -471,6 +471,8 @@ if (!WELOCALLY.PlaceFinderWidget) {
 
 	WELOCALLY.PlaceFinderWidget.makeItemContents = function (item, i) {
 		var wrapper = jQuery('<li></il>');
+		
+		
 		jQuery(wrapper)
 			.append(jQuery('<img class="selectable_marker" src='+
 					WELOCALLY.PlaceFinderWidget._cfg.imagePath+'/marker_place_'+

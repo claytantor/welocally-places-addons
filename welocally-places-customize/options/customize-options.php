@@ -76,6 +76,8 @@
 	}
 </style>
 <script type="text/javascript">
+var wl_options_imgfield = '';
+
 	jQuery(document).ready(function() {
 		jQuery('#style_support').toggle(
 			function(){
@@ -98,7 +100,22 @@
 					jQuery(this).removeClass('arrow_bottom');
 					jQuery(this).addClass('arrow_right');
 					jQuery(this).parent().find('div').hide('slow');
-			});
+		});
+		
+		
+		jQuery('#upload_image_button_1').click(function() {	 
+			wl_options_imgfield = jQuery('#welocally_map_default_marker').attr('name');
+			tb_show('Custom Marker Sprite', 'media-upload.php?type=image&amp;TB_iframe=true');
+			return false;
+		});
+		
+			
+		window.send_to_editor = function(html) {
+		 imgurl = jQuery('img',html).attr('src');
+		 jQuery("#"+wl_options_imgfield).val(imgurl);
+		 tb_remove();
+	}
+		
 	});
 	function styleCustomize(){
 		jQuery('#ajax_load').show();
@@ -186,30 +203,37 @@
 global $wlPlaces;
 $options = $wlPlaces->getOptions();
 
-if(!isset($options['style_customize']) || $options['style_customize'] == ''){
-	$options['style_customize'] = 'off';
-	wl_save_options($options);
-}
+if ( ( !empty( $_POST ) ) && 
+	( check_admin_referer( 
+		'welocally-places-customize-general', 
+		'welocally_places_customize_general_nonce' ) ) ) { 
 
-if(!isset($options['category_customize']) || $options['category_customize'] == ''){
-	$options['category_customize'] = 'off';
-	wl_save_options($options);
-}
-
-if(isset($_POST['welocally_font_names']) || $_POST['welocally_font_names'] != ''){
-	$options['font_names'] = $_POST['welocally_font_names'];
-	wl_save_options($options);
-}
-
-if(isset($_POST['welocally_map_custom_style']) || $_POST['welocally_map_custom_style'] != ''){
-	$options['map_custom_style'] = $_POST['welocally_map_custom_style'];
-	wl_save_options($options);
-}
-
-if (!empty($_POST)) {
+	
+	
+	if(!isset($options['style_customize']) || $options['style_customize'] == ''){
+		$options['style_customize'] = 'off';
+	}
+	
+	if(!isset($options['category_customize']) || $options['category_customize'] == ''){
+		$options['category_customize'] = 'off';
+	}
+	
+	if(isset($_POST['welocally_font_names']) || $_POST['welocally_font_names'] != ''){
+		$options['font_names'] = $_POST['welocally_font_names'];
+	}
+	
+	if(isset($_POST['welocally_map_custom_style']) || $_POST['welocally_map_custom_style'] != ''){
+		$options['map_custom_style'] = $_POST['welocally_map_custom_style'];
+		
+	}
+	
+	$options[ 'map_default_marker' ] = trim($_POST[ 'welocally_map_default_marker' ])? trim($_POST[ 'welocally_map_default_marker' ]):plugins_url() . "/welocally-places/resources/images/marker_all_base.png";
+	
 	foreach($_POST as $key=>$value){
 		wl_save_custom_file($key,$value);
 	}
+	
+	wl_save_options($options);
 }
 ?>
 
@@ -227,13 +251,12 @@ if (!empty($_POST)) {
 					<td>
 						<ul>
 							<li><input type="checkbox" id="welocally_infobox_title_link" name="welocally_infobox_title_link" <?php if($options[ 'infobox_title_link' ]=='on') { echo 'checked';  }  ?>>Infobox Link Place Name To Post</li>
-							<li><input type="checkbox" id="welocally_infobox_thumbnail" name="welocally_infobox_thumbnail" <?php if($options[ 'infobox_thumbnail' ]=='on') { echo 'checked';  }  ?>>Show Thumbnail In Infobox</li>
 						</ul>
 					</td>
 				</tr>
 
 				<tr valign="top">
-					<th scope="row"><?php _e( 'Default Marker Image' ); ?></th>
+					<th scope="row"><?php _e( 'Marker Image Sprite' ); ?></th>
 					<td>
 					<input id="welocally_map_default_marker" name="welocally_map_default_marker"  type="text" size="36" value="<?php echo $options[ 'map_default_marker' ]; ?>" />
 					<input id="upload_image_button_1" type="button" value="Upload Image" /><br/>
@@ -244,8 +267,8 @@ if (!empty($_POST)) {
 				<tr>
 				<th scope="row"><?php _e( 'Custom Map Style' ); ?></th>
 					<td>
-						<textarea rows="4" cols="60" name="welocally_map_custom_style"><?php printf($options[ 'map_custom_style' ]); ?></textarea><br/>
-						<span class="description"><?php _e( 'This is the custom styling for your maps. Leave blank to use default style. To style your map use the <a href="http://gmaps-samples-v3.googlecode.com/svn/trunk/styledmaps/wizard/index.html">Maps Style Wizard</a>' ); ?></span>
+						<textarea rows="4" cols="60" name="welocally_map_custom_style" class="wl_admin_codetext wl_admin_wide80"><?php printf(stripslashes($options[ 'map_custom_style' ])); ?></textarea><br/>
+						<div class="description"><?php _e( 'This is the custom styling for your maps. Leave blank to use default style. To style your map use the <a href="http://gmaps-samples-v3.googlecode.com/svn/trunk/styledmaps/wizard/index.html">Maps Style Wizard</a>' ); ?></div>
 					</td>
 				</tr>	
 			</table>
@@ -257,8 +280,8 @@ if (!empty($_POST)) {
 				<tr>
 				<th scope="row"><?php _e( 'Font Names' ); ?></th>
 					<td>
-						<input id="welocally_font_names" name="welocally_font_names"  type="text" class="wl_admin_codetext wl_admin_wide100"  value="<?php echo $options[ 'font_names' ]; ?>" />	
-						<span class="description"><?php _e( 'These are the is the custom fonts to be loaded.  Add fonts in the format: "Dosis|Londrina+Solid|Berkshire+Swash". See all fonts at <a href="http://www.google.com/webfonts#ChoosePlace:select">Google Web Fonts</a>' ); ?></span>
+						<input id="welocally_font_names" name="welocally_font_names"  type="text" class="wl_admin_codetext wl_admin_wide80"  value="<?php echo $options[ 'font_names' ]; ?>" />	
+						<div class="description"><?php _e( 'These are the is the custom fonts to be loaded.  Add fonts in the format: "Dosis|Londrina+Solid|Berkshire+Swash". See all fonts at <a href="http://www.google.com/webfonts#ChoosePlace:select">Google Web Fonts</a>' ); ?></div>
 					</td>			
 				</tr>	
 									
@@ -288,7 +311,7 @@ if (!empty($_POST)) {
 								<textarea id="option_basic" 
 									name="basic-styles" 
 									rows="10" 
-									class="wl_admin_codetext wl_admin_wide100"><?php wl_read_custom_file(WP_PLUGIN_DIR.'/welocally-places-customize/resources/custom/stylesheets/wl_places.css');?></textarea>
+									class="wl_admin_codetext wl_admin_wide80"><?php wl_read_custom_file(WP_PLUGIN_DIR.'/welocally-places-customize/resources/custom/stylesheets/wl_places.css');?></textarea>
 							</div>
 						</li>
 						<li class="style-option-item">
@@ -298,7 +321,7 @@ if (!empty($_POST)) {
 									id="option_place" 
 									name="places-place-styles" 
 									rows="10" 
-									class="wl_admin_codetext wl_admin_wide100"><?php wl_read_custom_file(WP_PLUGIN_DIR.'/welocally-places-customize/resources/custom/stylesheets/wl_places_place.css');?></textarea>
+									class="wl_admin_codetext wl_admin_wide80"><?php wl_read_custom_file(WP_PLUGIN_DIR.'/welocally-places-customize/resources/custom/stylesheets/wl_places_place.css');?></textarea>
 							</div>
 						</li>
 						<li class="style-option-item">
@@ -308,7 +331,7 @@ if (!empty($_POST)) {
 									id="option_multi" 
 									name="places-multi-styles" 
 									rows="10" 
-									class="wl_admin_codetext wl_admin_wide100"><?php wl_read_custom_file(WP_PLUGIN_DIR.'/welocally-places-customize/resources/custom/stylesheets/wl_places_multi.css');?></textarea>
+									class="wl_admin_codetext wl_admin_wide80"><?php wl_read_custom_file(WP_PLUGIN_DIR.'/welocally-places-customize/resources/custom/stylesheets/wl_places_multi.css');?></textarea>
 							</div>
 						</li>
 						</ul>											
@@ -325,7 +348,7 @@ if (!empty($_POST)) {
 						<div id="category_customize_selector">
 						<input id="category_customize_value" type="hidden" <?php if($options['category_customize'] == 'on'):?> value="off" <?php else:?> value ="on" <?php endif;?> />
 						<input id="category_customize" type="checkbox" <?php if($options['category_customize'] == 'on'):?> checked="checked" <?php endif;?>  onChange="categoryCustomize();">
-						<label for="category_customize">Customize Category Page</label></p>
+						<label for="category_customize">Customize</label></p>
 						</div>
 					</td>			
 				</tr>	
@@ -337,7 +360,7 @@ if (!empty($_POST)) {
 							id="category_options" 
 							name="category-places-map" 
 							rows="10" 
-							class="wl_admin_codetext wl_admin_wide100"
+							class="wl_admin_codetext wl_admin_wide80"
 							<?php if($options['category_customize'] == 'off'):?> style="display:none" <?php else:?> style="display: block;" <?php endif;?>><?php wl_read_custom_file(WP_PLUGIN_DIR.'/welocally-places-customize/views/custom/category-places-map.php');?></textarea>										
 					</td>	
 					</div>		
@@ -349,7 +372,7 @@ if (!empty($_POST)) {
 		
 		
 
-
+		<?php wp_nonce_field( 'welocally-places-customize-general','welocally_places_customize_general_nonce', true, true ); ?>
 		<p class="submit"><input type="submit" class="button-primary" value="<?php _e( 'Save Settings' ); ?>"/></p>
 		
 	</form>
