@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   	<title>Place Hound</title>
-  	<META NAME="description" CONTENT="Place Hound is just a simple way to search for places. powered by Welocally">
+  	<META NAME="description" CONTENT="Place Hound is just a simple way to search and share places. powered by Welocally">
   	<link rel="stylesheet" href="stylesheets/style.css" type="text/css" />
   	<link href='https://fonts.googleapis.com/css?family=Fresca|Asap' rel='stylesheet' type='text/css'>
   	<link rel="icon" type="image/png" href="images/hound_icon.png">  	
@@ -23,7 +23,7 @@
   <div id="container">
     <div id="header" class="header">   
       <div style="display:inline">
-		  <div style="display: inline-block;"><img src="images/phound02.png" class="logo" /></div>
+		  <div style="display: inline-block;"><a href="http://placehound.com"><img src="images/phound02.png" class="logo" /></a></div>
 		  <div class="placehound_title_area">
 				<div class="placehound_title">Place Hound</div>
 				<div class="welocally_link"><a href="http://welocally.com" target="_new"><img src="images/powered-welocally.png"/></a></div>
@@ -35,12 +35,14 @@
       </div>
 	</div>
 	<div class="placehound_title" style="margin-top:20px;">Place</div>
+	<div class="wl_place_title"><a href="http://placehound.com">Search for More Places</a></div>
+	
     <div id="main">
       <script type="text/javascript">
 //<![CDATA[
       
 	    var cfg = {
-	    		endpoint:'http://localhost:8082',
+	    		endpoint:'http://stage.welocally.com',
 	    		showShare: true,
 	    		styles: [
 						  {

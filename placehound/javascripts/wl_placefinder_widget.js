@@ -38,7 +38,7 @@ if (!WELOCALLY.PlaceFinderWidget) {
 					jQuery('<input type="text" name="search"/>');
 					
 				WELOCALLY.PlaceFinderWidget._results = 
-    				jQuery('<ol id="selectable"></ol>');	
+    				jQuery('<ol id="wl_placefinder_selectable"></ol>');	
     				
 				WELOCALLY.PlaceFinderWidget._geocoder = new google.maps.Geocoder();
 		
@@ -344,7 +344,7 @@ if (!WELOCALLY.PlaceFinderWidget) {
 				
 				WELOCALLY.PlaceFinderWidget.resetOverlays(
 					WELOCALLY.PlaceFinderWidget._searchLocation,
-					WELOCALLY.PlaceFinderWidget._placeMarkers) 
+					WELOCALLY.PlaceFinderWidget._placeMarkers) ;
 									
 				//jQuery(WELOCALLY.PlaceFinderWidget._searchField).show();
 				WELOCALLY.PlaceFinderWidget.setStatus(WELOCALLY.PlaceFinderWidget._ajaxStatus, '','message',true);

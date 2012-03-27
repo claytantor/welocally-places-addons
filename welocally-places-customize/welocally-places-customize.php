@@ -4,6 +4,7 @@ Plugin Name: Welocally Places Customize
 Plugin URI: http://www.welocally.com/wordpress/?page_id=2
 Description: The Welocally Places Customize add on lets you customize the plugin to your theme
 Author: Welocally Inc. 
+Version: 1.1.18.DEV
 Author URI: http://welocally.com
 License: Welocally Places Beta Add On License
 Notes: none
@@ -25,11 +26,13 @@ function welocally_customize_activate() {
 	}
 }
 
+require_once (dirname(__FILE__) . "/welocally-places-customize.class.php");
 require_once (dirname(__FILE__) . "/template-tags.php");
 require_once (dirname(__FILE__) . "/menu.php");
 
 //ajax calls
-add_action('wp_ajax_customize_save', 'welocally_theme_options_customize_save');
+add_action('wp_ajax_style_customize_save', 'welocally_style_options_customize_save');
+add_action('wp_ajax_category_customize_save', 'welocally_category_options_customize_save');
 
 // add action for apply filters
 add_action( 'init','welocally_places_customize_filters',100);
@@ -37,29 +40,48 @@ add_action( 'init','welocally_places_customize_filters',100);
 function welocally_places_customize_filters(){
 	global $wlPlaces;
 	$options = $wlPlaces->getOptions();
-	if($options['theme_customize'] == 'on'){
-		add_filter('map_widget_template', 'wl_places_customize_get_template_map_widget',100);
-		add_filter('list_widget_template', 'wl_places_customize_get_template_list_widget',100);
+	if($options['category_customize'] == 'on'){
 		add_filter('category_template', 'wl_places_customize_get_template_category',100);
 	}
+	
+
 }
 
 
-function welocally_theme_options_customize_save() {
+
+function welocally_style_options_customize_save() {
 	 global $wlPlaces;
 	 $options = $wlPlaces->getOptions();
-	 if ($_POST['customize'] == 'on'){
-	 	 if (!wl_create_custom_files()){echo json_encode(array('success' =>'false' ,'error' =>  'error, files can\'t created'));exit();}
-	 	$customize = 'off';
+	 //syslog(LOG_WARNING, print_r( $_POST['style_customize'], true));
+	 if ($_POST['style_customize'] == 'on'){
+	 	 if (!wl_create_custom_style_files()){echo json_encode(array('success' =>'false' ,'error' =>  'error, files can\'t created'));exit();}
+	 	$style_customize = 'on';
+	 }else {
+	 	$style_customize = 'off';
 	 }
-	 else {
-	 	$customize = 'on';
-	 }
-	 $options['theme_customize'] = $_POST['customize'];
+	 $options['style_customize'] = $_POST['style_customize'];
 	 wl_save_options($options);
-	 echo json_encode(array('success' =>'true' ,'customize' =>  $customize));
+	 echo json_encode(array('success' =>'true' ,'style_customize' =>  $style_customize));
 	 exit();
 }
+
+
+function welocally_category_options_customize_save() {
+	 global $wlPlaces;
+	 $options = $wlPlaces->getOptions();
+	 //syslog(LOG_WARNING, print_r( $_POST['category_customize'], true));
+	 if ($_POST['category_customize'] == 'on'){
+	 	 if (!wl_create_custom_category_files()){echo json_encode(array('success' =>'false' ,'error' =>  'error, files can\'t created'));exit();}
+	 	$category_customize = 'on';
+	 }else {
+	 	$category_customize = 'off';
+	 }
+	 $options['category_customize'] = $_POST['category_customize'];
+	 wl_save_options($options);
+	 echo json_encode(array('success' =>'true' ,'category_customize' =>  $category_customize));
+	 exit();
+}
+
 
 
 ?>
