@@ -15,6 +15,7 @@ register_activation_hook(__FILE__, 'welocally_customize_activate');
 
 //need to check for welocally places
 function welocally_customize_activate() {
+	global $wlPlaces;
 	if (version_compare(PHP_VERSION, "5.1", "<") && welocally_is_curl_installed()) {
 		trigger_error('Can Not Install Welocally Places Customize addon, Please Check Requirements', E_USER_ERROR);
 	} 
@@ -23,6 +24,21 @@ function welocally_customize_activate() {
 	}
 	else {
 		syslog(LOG_WARNING, "activate");
+		//set the version
+		$options = $wlPlaces->getOptions();
+		$options['style_customize_version'] = 'v'.microtime(true);
+		
+		//set defaults for init
+		if(!isset($options['style_customize'])){
+			$options['style_customize'] = 'off';
+		}
+				//set defaults for init
+		if(!isset($options['category_customize'])){
+			$options['category_customize'] = 'off';
+		}
+		
+		wl_save_options($options);
+		
 	}
 }
 
@@ -43,8 +59,6 @@ function welocally_places_customize_filters(){
 	if($options['category_customize'] == 'on'){
 		add_filter('category_template', 'wl_places_customize_get_template_category',100);
 	}
-	
-
 }
 
 

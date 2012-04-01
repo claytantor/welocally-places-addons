@@ -62,7 +62,7 @@ WELOCALLY_DealFinderWidget.prototype.setLocation = function(lat, lng) {
 
 	var surl = this.endpoint +
 			'/geodb/deal/1_0/search.json?'+WELOCALLY.util.serialize(query)+"&callback=?";
-	console.log(surl);
+	
 	
 	var t = this;
 	
@@ -74,7 +74,7 @@ WELOCALLY_DealFinderWidget.prototype.setLocation = function(lat, lng) {
 		  dataType: "json",
 		  success: function(data) {
 			jQuery.each(data, function(i,item){						
-				console.log('deal:'+item.location.name);
+				
 				
 				var listItem = jQuery('<li></li>');
 				
@@ -115,7 +115,7 @@ WELOCALLY_DealFinderWidget.prototype.setLocation = function(lat, lng) {
 
 WELOCALLY_DealFinderWidget.prototype.next = function() {
  //get the right position
- 		console.log('next');
+ 		
         var left_indent = parseInt(jQuery('#wl_deals_slides ul').css('left')) - this.item_width;
          
         //slide the item

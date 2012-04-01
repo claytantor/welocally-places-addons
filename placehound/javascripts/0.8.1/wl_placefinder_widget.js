@@ -28,12 +28,14 @@ function WELOCALLY_PlaceFinderWidget (cfg) {
 	
 	this.init = function() {
 		
+		var _instance = this;
+		
 		if(!cfg.endpoint){
 			cfg.endpoint='http://stage.welocally.com';
 		}
 		
 		if(!cfg.imagePath){
-			cfg.imagePath='http://placehound.com/images';
+			cfg.imagePath = 'http://placehound.com/images/marker_all_base.png';
 		}
 		
 		if(!cfg.loc){
@@ -73,17 +75,47 @@ function WELOCALLY_PlaceFinderWidget (cfg) {
 			jQuery('<input type="text" name="location"/>');
 	    jQuery(wrapper).append('<div>Enter a location to search such as "New York NY". You can even provide a full address for more refined searches.</div>');
 	    jQuery(this._locationField).attr('class','wl_widget_field wl_placefinder_search_field');
-	    jQuery(this._locationField).bind('change' , {instance: this}, this.locationFieldInputHandler);       	
+	    jQuery(this._locationField).bind('change' , {instance: this}, this.locationFieldInputHandler);   
+	    
+	    jQuery(this._locationField).bind('keypress',{instance: this}, this.locationFieldInputHandler);
+	    
+	    	    
+		if(this._cfg.defaultLocation){
+			jQuery(this._locationField).val(this._cfg.defaultLocation);
+			jQuery(this._locationField).trigger('change' , {instance: _instance}, this.locationFieldInputHandler); 
+		}
+	    
 	    jQuery(wrapper).append(this._locationField);
 		
 		//search field
 	    this._searchField =
-			jQuery('<input type="text" name="search"/>');
+			jQuery('<input type="text" name="search" id="wl_finder_search_field"/>');
 		jQuery(wrapper).append('<div>Enter what you are searching for, this can be a type of place like "Restaurant", what they sell like "Pizza", or the name of the place like "Seward Park".</div>');       
 		jQuery(this._searchField).attr('class','wl_widget_field wl_placefinder_search_field');
 		jQuery(this._searchField).bind('change' , {instance: this}, this.searchHandler);  
+		
+		
 		jQuery(wrapper).append(this._searchField);
 		
+		//bind focus
+		jQuery(this._locationField).keypress(function(e){
+	        if ( e.which == 13 ){
+	        	jQuery(this._locationField).trigger('change' , {instance: this}, this.locationFieldInputHandler);
+	        	jQuery('#wl_finder_search_field').focus();
+	        	return false;
+	        }
+	    });
+		
+		jQuery(this._searchField).keypress(function(e){
+	        if ( e.which == 13 ){
+	        	jQuery(this._searchField).trigger('change' , {instance: _instance}, this.searchHandler);
+	        	jQuery('#wl_finder_search_button').focus();
+	        	return false;
+	        }
+	    });
+		
+		
+				
 		var buttonDiv = jQuery('<div></div>').attr('class','wl_finder_search_button_area'); 	
 		var fetchButton = jQuery('<button id="wl_finder_search_button">Search</div>');
 		
@@ -112,7 +144,7 @@ WELOCALLY_PlaceFinderWidget.prototype.locationFieldInputHandler = function(event
 	var _instance = event.data.instance;
 	
 	var addressValue = jQuery(this).val();
-	console.log('location: '+addressValue);
+	
 	
 	_instance.setStatus(_instance._ajaxStatus, 'Geocoding','wl_update',true);
 	
@@ -195,6 +227,8 @@ WELOCALLY_PlaceFinderWidget.prototype.locationFieldInputHandler = function(event
 		} 
 	});
 	
+	return false;
+	
 };
 
 
@@ -221,31 +255,28 @@ WELOCALLY_PlaceFinderWidget.prototype.searchHandler = function(event) {
 		
 		var surl = _instance._cfg.endpoint +
 			'/geodb/place/1_0/search.json?'+WELOCALLY.util.serialize(query)+"&callback=?";
-		console.log(surl);
 		
 		_instance.setStatus(_instance._ajaxStatus, 'Finding places','wl_update',true);
-		jQuery(_instance._results).hide();
+		jQuery(_instance._multiPlacesWidget._results).hide();
 		
 		_instance._multiPlacesWidget.resetOverlays(
 					_instance._searchLocation,
-					_instance._placeMarkers);
+					_instance._multiPlacesWidget._placeMarkers);
 			
 		jQuery.ajax({
 				  url: surl,
 				  dataType: "json",
 				  success: function(data) {
-					//setup the bounds
-					//var bounds = new google.maps.LatLngBounds();
-					//bounds.extend(_instance._searchLocation);
-					
 					//set to result bounds if enough results
 					if(data != null && data.length>0){						
 						_instance.setStatus(_instance._ajaxStatus, '','wl_message',false);
-						_instance._multiPlacesWidget.setPlaces(data);
-						
+						_instance._multiPlacesWidget.setPlaces(data);						
 					} else {
+						
 						bounds = _instance._multiPlacesWidget._map.getBounds();
 						_instance.setStatus(_instance._ajaxStatus, 'No results were found matching your search.','wl_warning',false);
+						
+						_instance._multiPlacesWidget.refreshMap(_instance._searchLocation);
 					}
 					
 					
@@ -262,6 +293,8 @@ WELOCALLY_PlaceFinderWidget.prototype.searchHandler = function(event) {
 	} else {
 		_instance.setStatus(_instance._ajaxStatus, 'Please choose a location for search.','wl_warning',false);
 	}
+	
+	return false;
 
 };
 

@@ -74,6 +74,9 @@
 	.style-option-item textarea {
 		width:100%;
 	}
+	.wl_style_options {
+		width:80%;
+	}
 </style>
 <script type="text/javascript">
 var wl_options_imgfield = '';
@@ -133,12 +136,12 @@ var wl_options_imgfield = '';
 				
 		var submitApplication = function(data) {
 			if(data.success == 'true'){
-				jQuery('#style_customize_value').val(data.customize);
+				jQuery('#style_customize_value').val(data.style_customize);
 				if(data.style_customize == 'on') {
-					jQuery('#style_options').show();
+					jQuery('.wl_style_options').show();
 				}
 				if (data.style_customize == 'off') {
-					jQuery('#style_options').hide();
+					jQuery('.wl_style_options').hide();
 				}
 				jQuery('#ajax_load').hide();
 			}
@@ -174,12 +177,12 @@ var wl_options_imgfield = '';
 				
 		var submitApplication = function(data) {
 			if(data.success == 'true'){
-				jQuery('#category_customize_value').val(data.customize);
+				jQuery('#category_customize_value').val(data.category_customize);
 				if(data.category_customize == 'on') {
-					jQuery('#category_options').show();
+					jQuery('.category_options').show();
 				}
 				if (data.category_customize == 'off') {
-					jQuery('#category_options').hide();
+					jQuery('.category_options').hide();
 				}
 				jQuery('#ajax_load').hide();
 			}
@@ -223,8 +226,15 @@ if ( ( !empty( $_POST ) ) &&
 	}
 	
 	if(isset($_POST['welocally_map_custom_style']) || $_POST['welocally_map_custom_style'] != ''){
-		$options['map_custom_style'] = $_POST['welocally_map_custom_style'];
-		
+		$options['map_custom_style'] = $_POST['welocally_map_custom_style'];		
+	}
+	
+	if(isset($_POST['welocally_widget_selector_override']) || $_POST['welocally_widget_selector_override'] != ''){
+		$options['widget_selector_override'] = $_POST['welocally_widget_selector_override'];		
+	}
+	
+	if(isset($_POST['welocally_category_selector_override']) || $_POST['welocally_category_selector_override'] != ''){
+		$options['category_selector_override'] = $_POST['welocally_category_selector_override'];		
 	}
 	
 	$options[ 'map_default_marker' ] = trim($_POST[ 'welocally_map_default_marker' ])? trim($_POST[ 'welocally_map_default_marker' ]):plugins_url() . "/welocally-places/resources/images/marker_all_base.png";
@@ -232,7 +242,7 @@ if ( ( !empty( $_POST ) ) &&
 	foreach($_POST as $key=>$value){
 		wl_save_custom_file($key,$value);
 	}
-	
+	$options['style_customize_version'] = 'v'.microtime(true);
 	wl_save_options($options);
 }
 ?>
@@ -299,12 +309,19 @@ if ( ( !empty( $_POST ) ) &&
 						<label for="style_customize">Customize</label></p>
 						</div>
 					</td>			
-				</tr>					
-				<tr>
+				</tr>
+				<tr class="wl_style_options" <?php if($options['style_customize'] == 'off'):?> style="display:none" <?php endif;?>>
+				<th scope="row"><?php _e( 'Widget Selector Style Override' ); ?></th>
+					<td>
+						<input id="welocally_widget_selector_override" name="welocally_widget_selector_override"  type="text" class="wl_admin_codetext wl_admin_wide80"  value="<?php echo $options[ 'widget_selector_override' ]; ?>" />	
+						<div class="description"><?php _e( 'Use this CSS style override for the style for widget map selectors. Commonly this is something like width:98%;' ); ?></div>
+					</td>			
+				</tr>						
+				<tr class="wl_style_options" <?php if($options['style_customize'] == 'off'):?> style="display:none" <?php endif;?>>
 					<td colspan="2">
 						
 						<!-- list -->
-						<ul id="style_options" <?php if($options['style_customize'] == 'off'):?> style="display:none" <?php else:?> style="display: block;" <?php endif;?>>
+						<ul class="wl_style_options" <?php if($options['style_customize'] == 'off'):?> style="display:none" <?php else:?> style="display: block; width:80%; min-width:600px;" <?php endif;?>>
 						<li class="style-option-item">
 							<p class="header toggle arrow_right"><span class="arrow"></span>Basic Styles</p>
 							<div style="display: none">
@@ -352,18 +369,22 @@ if ( ( !empty( $_POST ) ) &&
 						</div>
 					</td>			
 				</tr>	
-				
-				<tr>
-					<td colspan="2">
-					<div style="width:100%">
-					<textarea 
-							id="category_options" 
-							name="category-places-map" 
-							rows="10" 
-							class="wl_admin_codetext wl_admin_wide80"
-							<?php if($options['category_customize'] == 'off'):?> style="display:none" <?php else:?> style="display: block;" <?php endif;?>><?php wl_read_custom_file(WP_PLUGIN_DIR.'/welocally-places-customize/views/custom/category-places-map.php');?></textarea>										
-					</td>	
-					</div>		
+				<tr class="category_options" <?php if($options['category_customize'] == 'off'):?> style="display:none" <?php endif;?>>
+				<th scope="row"><?php _e( 'Category Selector Style Override' ); ?></th>
+					<td>
+						<input id="welocally_category_selector_override" name="welocally_category_selector_override"  type="text" class="wl_admin_codetext wl_admin_wide80"  value="<?php echo $options['category_selector_override']; ?>" />	
+						<div class="description wl_admin_wide80"><?php _e( 'Use this CSS style override for the style for category map selectors. Commonly this is something like width:25%; height:200px;' ); ?></div>
+					</td>			
+				</tr>								
+				<tr class="category_options" <?php if($options['category_customize'] == 'off'):?> style="display:none" <?php endif;?>>
+					<th scope="row"><?php _e( 'Category Page Template' ); ?></th>
+					<td>
+						<textarea name="category-places-map" 
+								rows="10" 
+								class="wl_admin_codetext wl_admin_wide80"><?php wl_read_custom_file(WP_PLUGIN_DIR.'/welocally-places-customize/views/custom/category-places-map.php');?></textarea><br/>
+						<div class="description wl_admin_wide80"><?php _e( 'You will need to copy your theme\'s archive page, usually called archive.php, into this text area and place the [welocally type="category"/] tag where you want it to show up.' ); ?></div>										
+					
+					</td>
 				</tr>													
 			</table>		
 		

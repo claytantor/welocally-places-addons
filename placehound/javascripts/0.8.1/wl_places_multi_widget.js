@@ -55,7 +55,10 @@ WELOCALLY_PlacesMultiWidget.prototype.initCfg = function(cfg) {
 		cfg.imagePath = 'http://placehound.com/images/marker_all_base.png';
 	}
 	
-	
+	if (cfg.showSelection==null) {
+		cfg.showSelection = true;
+	}
+		
 	if (!cfg.zoom) {
 		cfg.zoom = 16;
 	}
@@ -93,7 +96,7 @@ WELOCALLY_PlacesMultiWidget.prototype.makeWrapper = function() {
 	//results
 	this._results = 
 		jQuery('<ol id="wl_places_mutli_selectable"></ol>');	
-	jQuery(this._results).selectable();
+	
 	jQuery(this._results).css('display','none');
 	jQuery( this._results ).bind( "selectableselected", {instance: this}, this.selectedItemHandler);
 	jQuery(wrapper).append(this._results);
@@ -106,6 +109,7 @@ WELOCALLY_PlacesMultiWidget.prototype.makeWrapper = function() {
 		this._map = this.initMap(this._map_canvas);
 	}
 	
+	jQuery(this._results).selectable({ cancel: 'a' });
 	return wrapper;
 };
 
@@ -235,22 +239,26 @@ WELOCALLY_PlacesMultiWidget.prototype.addPlaces = function(map, places, placeMar
 			markerIcon);
 		
 		//add result to list
-		var listItem = _instance.makeItemContents(item,i, true);
-		
-		if(_instance._cfg.overrideSelectableStyle){
-			jQuery(listItem).attr('style',_instance._cfg.overrideSelectableStyle);
+		if(_instance._cfg.showSelection){
+			var listItem = _instance.makeItemContents(item,i, true);
+			
+			if(_instance._cfg.overrideSelectableStyle){
+				jQuery(listItem).attr('style',_instance._cfg.overrideSelectableStyle);
+			}
+			
+			
+			jQuery(listItem).attr('id','wl_places_mutli_selectable_'+i);
+			jQuery(listItem).attr('class','ui-widget-content');
+			
+			jQuery(listItem).mouseover(function() {
+		    	jQuery(this).css('cursor', 'pointer');
+		    });
+			
+			jQuery(_instance._results).append(jQuery(listItem));
+			
+			jQuery(_instance._results).show();
 		}
 		
-		
-		jQuery(listItem).attr('id','wl_places_mutli_selectable_'+i);
-		jQuery(listItem).attr('class','ui-widget-content');
-		
-		jQuery(listItem).mouseover(function() {
-	    	jQuery(this).css('cursor', 'pointer');
-	    });
-		
-		jQuery(_instance._results).append(jQuery(listItem));
-		jQuery(_instance._results).show();
 	
 	});	
 	
@@ -337,14 +345,12 @@ WELOCALLY_PlacesMultiWidget.prototype.setMapEvents = function(map, markers){
 	});		
 	
 	var tilesHandle = google.maps.event.addListener(map, 'tilesloaded', function() {
-		console.log('tilesloaded2');
-		
-		jQuery('.wl_places_multi_map_canvas').find('img').css('max-width','none');
 		
 		_instance.setStatus(
 				_instance._mapStatus, 
 				_instance.makeMapStatus(_instance._map, _instance._placeMarkers) , 
 				'wl_message', false);
+		
 		google.maps.event.removeListener(tilesHandle);
 		WELOCALLY.util.preload([
 				 'http://maps.google.com/mapfiles/openhand.cur'
@@ -416,28 +422,34 @@ WELOCALLY_PlacesMultiWidget.prototype.resetOverlays=function (location, markersA
 	jQuery(_instance._map).show();
 	
 	_instance.deleteOverlays(markersArray);
+	_instance._placeMarkers = [];
 
 };
 
 WELOCALLY_PlacesMultiWidget.prototype.refreshMap = function(searchLocation) {
 	var _instance = this;
-	
 	google.maps.event.trigger(_instance._map, 'resize');
 	
-	var markerIconLocation = 
-	new google.maps.MarkerImage(_instance._cfg.imagePath, new google.maps.Size(32, 32), new google.maps.Point(0, 0));
+	if(_instance._placeMarkers.length==0){
+		var markerIconLocation = 
+			new google.maps.MarkerImage(_instance._cfg.imagePath, new google.maps.Size(32, 32), new google.maps.Point(0, 0));
 
-	_instance.addMarkerCenter(
-			_instance._placeMarkers,
-			_instance._map,
-			searchLocation,
-			markerIconLocation);
+		_instance.addMarkerCenter(
+				_instance._placeMarkers,
+				_instance._map,
+				searchLocation,
+				markerIconLocation);
+				
+	}
+	
+	_instance.setStatus(
+			_instance._mapStatus, 
+			_instance.makeMapStatus(_instance._map, _instance._placeMarkers) , 
+			'wl_message', false);
 	
 	var listener = google.maps.event.addListener(_instance._map, "tilesloaded", function() {
-		console.log('tilesloaded');
+
 		google.maps.event.removeListener(listener);
-		
-		jQuery('.wl_places_multi_map_canvas').find('img').css('max-width','none');
 		
 		_instance._map.setCenter(searchLocation);
 						
@@ -467,7 +479,7 @@ WELOCALLY_PlacesMultiWidget.prototype.deleteOverlays=function (markersArray) {
   if (markersArray) {
 	for (i in markersArray) {
 	  markersArray[i].setMap(null);
-	}
+	}	
 	markersArray.length = 0;
   }
 };

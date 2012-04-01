@@ -1,7 +1,7 @@
 /*
 	copyright 2012 welocally. NO WARRANTIES PROVIDED
 */
-
+//foo
 function WELOCALLY_AddPlaceWidget (cfg) {		
 	this.selectedSection;
 	this.cfg;
@@ -47,7 +47,7 @@ function WELOCALLY_AddPlaceWidget (cfg) {
 		}
 		
 		if (!cfg.imagePath) {
-			cfg.imagePath = 'http://placehound.com/images';
+			cfg.imagePath = 'http://placehound.com/images/marker_all_base.png';
 		}
 		
 		if (!cfg.zoom) {
@@ -76,13 +76,15 @@ function WELOCALLY_AddPlaceWidget (cfg) {
 
 		// Build Widget
 		this.wrapper = jQuery('<div></div>');	
-		jQuery(this.wrapper).attr('class','welocally_addplace_widget');
-		jQuery(this.wrapper).attr('id','welocally_addplace_widget');
+		jQuery(this.wrapper).attr('class','wl_addplace_widget');
+		jQuery(this.wrapper).attr('id','wl_addplace_widget');
 		
 		this.statusArea = jQuery('<div></div>');
 		jQuery(this.ajaxStatus).css('display','none');	
 		jQuery(this.wrapper).append(this.statusArea);
-	
+		
+//		this.addPlaceArea = jQuery('<div class="wl_wl_addplace_form_area"></div>');
+//		jQuery(this.wrapper).append(this.statusArea);
 	
 		jQuery(script).parent().before(this.wrapper);
 		
@@ -104,9 +106,11 @@ function WELOCALLY_AddPlaceWidget (cfg) {
 			jQuery(this.map_canvas).css('min-height','200px');
 			jQuery(this.map_canvas).attr('class','welocally_addplace_widget_map_canvas');
 			jQuery(this.map_canvas).attr("id","wl_addplace_map_canvas_widget");
-			jQuery(this.wrapper).append(this.map_canvas);
+			//jQuery(this.wrapper).append(this.map_canvas);
+			jQuery(this.formArea).append(this.map_canvas);
 					
 			this.map = this.initMap(this.map_canvas);
+			this.setLocation(this.cfg.location);
 			
 			this.selectedClassifiersArea = 
 				jQuery('<div class="wl_addplace_selected_classifiers"><ul></ul></div>');
@@ -114,11 +118,12 @@ function WELOCALLY_AddPlaceWidget (cfg) {
 			jQuery(this.wrapper).append(this.selectedClassifiersArea);
 			
 			this.classifiersArea = jQuery('<div class="wl_addplace_classifiers"><ul id="wl_addplace_selectable"></ul></div>');
-			jQuery(this.classifiersArea).find('#wl_addplace_selectable').selectable();
+			jQuery(this.classifiersArea).find('#wl_addplace_selectable').selectable({ cancel: 'a' });
 			jQuery(this.classifiersArea).css('display','none');
        
         		
-			jQuery(this.wrapper).append(this.classifiersArea);
+			//jQuery(this.wrapper).append(this.classifiersArea);
+			jQuery(this.formArea).append(this.classifiersArea);
 						
 		
 		}
@@ -147,10 +152,12 @@ WELOCALLY_AddPlaceWidget.prototype.initMap = function(map_canvas) {
     	map_canvas, 
     	options);
     
-    this.setLocationMarker(
-    	map, 
-    	_instance.cfg.location,  
-    	_instance.cfg.imagePath+'/marker_search.png');
+    
+    
+//    this.setLocationMarker(
+//    	map, 
+//    	_instance.cfg.location,  
+//    	_instance.cfg.imagePath+'/marker_search.png');
     
     return map;
 };
@@ -202,7 +209,7 @@ WELOCALLY_AddPlaceWidget.prototype.addOptionalFieldsToForm = function(formArea) 
 	//phone
 	var phoneField = jQuery('<div class="wl_field_area"><input type="text" name="phoneField" class="wl_widget_field wl_addplace_phone"/></div>');
 	jQuery(phoneField).change(function(event, ui){
-		_instance.selectedPlace.properties.phone=jQuery(this).val();		
+		_instance.selectedPlace.properties.phone=jQuery(this).find('input').val();		
 		jQuery(formArea).find('.wl_addplace_web').focus();		
 	});	
 	jQuery(formArea).append(phoneField);
@@ -213,7 +220,7 @@ WELOCALLY_AddPlaceWidget.prototype.addOptionalFieldsToForm = function(formArea) 
 	//website
 	var webField = jQuery('<div class="wl_field_area"><input type="text" name="webField" class="wl_widget_field wl_addplace_web"/></div>');
 	jQuery(webField).change(function(event, ui){
-		_instance.selectedPlace.properties.website=jQuery(this).val();
+		_instance.selectedPlace.properties.website=jQuery(this).find('input').val();
 		
 	});	
 	jQuery(formArea).append(webField);
@@ -270,7 +277,6 @@ WELOCALLY_AddPlaceWidget.prototype.selectedClassifiedHandler = function(event,ui
 WELOCALLY_AddPlaceWidget.prototype.nameChangeHandler = function(event, ui) {
 	
 	var _instance = event.data._instance;
-	console.log('name changed:'+jQuery(this).val());
 	_instance.selectedPlace.properties.name=jQuery(this).val();	
 	jQuery(event.data.form).find('.wl_addplace_loc_field_area').show();
 	jQuery(event.data.form).find('.wl_addplace_location').focus();
@@ -281,7 +287,6 @@ WELOCALLY_AddPlaceWidget.prototype.nameChangeHandler = function(event, ui) {
 WELOCALLY_AddPlaceWidget.prototype.locationChangeHandler = function(event) {
 	
 	var addressValue = jQuery(this).val();
-	console.log('location: '+addressValue);
 	
 	var _instance = event.data._instance;
 	var _field = this;
@@ -327,11 +332,12 @@ WELOCALLY_AddPlaceWidget.prototype.locationChangeHandler = function(event) {
 			var location = new google.maps.LatLng(
 				results[0].geometry.location.lat(), 
 				results[0].geometry.location.lng());
+			_instance.setLocation(location);
 						
-			_instance.setLocationMarker(
-				_instance.map, 
-				location,  
-				_instance.cfg.imagePath+'/marker_search.png');
+//			_instance.setLocationMarker(
+//				_instance.map, 
+//				location,  
+//				_instance.cfg.imagePath+'/marker_search.png');
 					
 			jQuery(_instance.map_canvas).show();
 			google.maps.event.trigger(_instance.map, 'resize');
@@ -353,18 +359,14 @@ WELOCALLY_AddPlaceWidget.prototype.savePlace = function (selectedPlace) {
 
 	var _instance = this;
 	
-	
-	//we need some validation
-	
-
 	_instance.setStatus(_instance.statusArea,'Saving Place...', 'wl_message', true);
 	
 	var ajaxurl = _instance.cfg.endpoint +
 				'/geodb/place/1_0/save.json';
-	console.log(ajaxurl);
+	
 	   
 	jqxhr = jQuery.ajax({
-	  type: 'POST',		  
+	  type: 'GET',		  
 	  url: ajaxurl,
 	  data: selectedPlace,
 	  dataType : 'jsonp',
@@ -376,8 +378,6 @@ WELOCALLY_AddPlaceWidget.prototype.savePlace = function (selectedPlace) {
 	  error : function(jqXHR, textStatus, errorThrown) {
 		if(textStatus != 'abort'){
 			_instance.setStatus(_instance.statusArea,'ERROR : '+textStatus, 'error', false);
-		}	else {
-			console.log(textStatus);
 		}		
 	  },		  
 	  success : function(data, textStatus, jqXHR) {
@@ -396,7 +396,7 @@ WELOCALLY_AddPlaceWidget.prototype.savePlace = function (selectedPlace) {
 WELOCALLY_AddPlaceWidget.prototype.setSelectedPlace = function(selectedPlace) {
 
 	var _instance=this;
-	console.log(selectedPlace._id);
+	jQuery(this.formArea).hide();
 	var selectedPlaceArea = jQuery('<div class="wl_selected"></div>');
 	
 	jQuery(selectedPlaceArea)
@@ -439,12 +439,13 @@ WELOCALLY_AddPlaceWidget.prototype.setSelectedPlace = function(selectedPlace) {
 				qVal+'" target="_new">Driving Directions</a></div>');
 		
 	}
+	
 	 
 	//the tag
 	var tag = '[welocally id="'+selectedPlace._id+'" /]';
-	var inputArea = jQuery('<input class="wl_selected_tag wl_widget_field" type="text"/>');
+	var inputArea = jQuery('<input class="wl_selected_tag_add wl_widget_field" type="text"/>');
 	jQuery(inputArea).val(tag);
-	var wlSelectedTagArea = jQuery('<div class="wl_selected_tag"></div>');
+	var wlSelectedTagArea = jQuery('<div class="wl_selected_tag_add_area"></div>');
 	jQuery(wlSelectedTagArea).append(inputArea);
 	jQuery(selectedPlaceArea).append(wlSelectedTagArea);	
 	
@@ -485,13 +486,20 @@ WELOCALLY_AddPlaceWidget.prototype.getShortNameForType = function(type_name, add
 };
 
 
-WELOCALLY_AddPlaceWidget.prototype.setLocation=function (location) {			
-	this.map.setCenter(location);	
+WELOCALLY_AddPlaceWidget.prototype.setLocation=function (location) {	
+	
+	var _instance = this;	
+	
+	_instance.map.setCenter(location);	
+	
+	var markerIconLocation = 
+		new google.maps.MarkerImage(_instance.cfg.imagePath, new google.maps.Size(32, 32), new google.maps.Point(0, 0));
+
 	
 	this.setLocationMarker(
-		this.map,
+		_instance.map,
 		location,
-		this.cfg.imagePath+'/marker_search.png');	
+		markerIconLocation);	
 		
 };
 
@@ -499,6 +507,8 @@ WELOCALLY_AddPlaceWidget.prototype.setLocationMarker = function(markerMap, locat
 
   if(this.locationMarker != null)	
 	this.locationMarker.setMap(null);
+  
+  
   
   this.locationMarker = new google.maps.Marker({
 	position: location,
@@ -563,7 +573,7 @@ WELOCALLY_AddPlaceWidget.prototype.getCategories = function(type, category) {
 	
 	var ajaxurl = _instance.cfg.endpoint +
 				classifier_path+'?'+WELOCALLY.util.serialize(options)+"&callback=?";
-	console.log(ajaxurl);
+
 	
 	jqxhr = jQuery.ajax({
 	  url: ajaxurl,
@@ -574,8 +584,6 @@ WELOCALLY_AddPlaceWidget.prototype.getCategories = function(type, category) {
 	  error : function(jqXHR, textStatus, errorThrown) {
 		if(textStatus != 'abort'){
 			_instance.setStatus(_instance.statusArea, 'ERROR : '+textStatus,'wl_error',false);
-		}	else {
-			console.log(textStatus);
 		}	
 	  },		  
 	  success : function(data, textStatus, jqXHR) {
