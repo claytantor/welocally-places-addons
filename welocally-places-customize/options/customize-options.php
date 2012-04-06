@@ -77,6 +77,50 @@
 	.wl_style_options {
 		width:80%;
 	}
+	.wellocaly_font_holder {
+		background:#f2f2f2 repeat-x scroll left top;
+		float: left;
+		padding: 20px 25px 10px 25px;
+		border: 1px solid #bbb;
+		-moz-border-radius: 5px;
+		-khtml-border-radius: 5px;
+		-webkit-border-radius: 5px;
+		border-radius: 5px;
+		-moz-box-sizing: content-box;
+		-webkit-box-sizing: content-box;
+		-khtml-box-sizing: content-box;
+		box-sizing: content-box;
+		text-shadow: rgba(255,255,255,1) 0 1px 0;
+		color: #6b6b6b;
+		font-weight: bold;
+		position: relative;
+		margin-right: 15px;
+		
+	}
+	.welocally_font_remove {
+		display: block;
+		height: 14px;
+		width: 10px;
+		position: absolute;
+		border: 1px solid #222;
+		-moz-border-radius: 7px 5px 7px 5px;
+		-khtml-border-radius: 7px 5px 7px 5px;
+		-webkit-border-radius: 7px 5px 7px 5px;
+		border-radius: 7px 5px 7px 5px;
+		-moz-box-sizing: content-box;
+		-webkit-box-sizing: content-box;
+		-khtml-box-sizing: content-box;
+		box-sizing: content-box;
+		text-shadow: rgba(255,255,255,1) 0 1px 0;
+		top: 3px;
+		right: 3px;
+		font-style: italic;
+		line-height: 11px;
+		color: #fff;
+		padding-left: 4px;
+		background: #707070;
+		cursor: pointer;
+	}
 </style>
 <script type="text/javascript">
 var wl_options_imgfield = '';
@@ -118,6 +162,30 @@ var wl_options_imgfield = '';
 		 jQuery("#"+wl_options_imgfield).val(imgurl);
 		 tb_remove();
 	}
+
+	jQuery("#add_font").click(function(){
+		var font = jQuery('#welocally_font_names').val();
+		if(font != ''){
+			jQuery('<div class="wellocaly_font_holder"><span data-font="'+font.split(' ').join("+")+'" class="welocally_font_remove">x</span>'+font+'</div>').appendTo('#welocally_fonts_holder');
+			var cfont = jQuery('#welocally_font_names_data').val();
+			if(cfont.length > 0){
+				cfont = cfont + '|';
+			}
+			jQuery('#welocally_font_names_data').val(cfont + font.split(' ').join("+"));
+			jQuery('#welocally_font_names').val('');
+		}
+	});
+	
+	jQuery('.welocally_font_remove').live('click',function(){
+		fonts = jQuery('#welocally_font_names_data').val().split('|');
+		for(x=0;x<fonts.length;x++){
+			if (fonts[x] == jQuery(this).data('font')){
+				fonts.splice(x, 1);				
+			}
+		}
+		jQuery('#welocally_font_names_data').val(fonts.join('|'));
+		jQuery(this).parent().remove();
+	})
 		
 	});
 	function styleCustomize(){
@@ -210,8 +278,6 @@ if ( ( !empty( $_POST ) ) &&
 	( check_admin_referer( 
 		'welocally-places-customize-general', 
 		'welocally_places_customize_general_nonce' ) ) ) { 
-
-	
 	
 	if(!isset($options['style_customize']) || $options['style_customize'] == ''){
 		$options['style_customize'] = 'off';
@@ -221,8 +287,8 @@ if ( ( !empty( $_POST ) ) &&
 		$options['category_customize'] = 'off';
 	}
 	
-	if(isset($_POST['welocally_font_names']) || $_POST['welocally_font_names'] != ''){
-		$options['font_names'] = $_POST['welocally_font_names'];
+	if(isset($_POST['welocally_font_names_data'])){
+		$options['font_names'] = $_POST['welocally_font_names_data'];
 	}
 	
 	if(isset($_POST['welocally_map_custom_style']) || $_POST['welocally_map_custom_style'] != ''){
@@ -290,7 +356,21 @@ if ( ( !empty( $_POST ) ) &&
 				<tr>
 				<th scope="row"><?php _e( 'Font Names' ); ?></th>
 					<td>
-						<input id="welocally_font_names" name="welocally_font_names"  type="text" class="wl_admin_codetext wl_admin_wide80"  value="<?php echo $options[ 'font_names' ]; ?>" />	
+						<input id="welocally_font_names" name="welocally_font_names"  type="text" class="wl_admin_codetext wl_admin_wide80"/>	
+						<input id="add_font" type="button" value="Add">
+						<div id="welocally_fonts_holder" style="margin-top: 10px;">
+							<?php if($options['font_names']): ?>
+								<?php $fonts = array();$fonts=explode('|',$options['font_names']);?>
+								<?php foreach($fonts as $font):?>
+									<div class="wellocaly_font_holder">
+										<span data-font="<?php echo $font;?>" class="welocally_font_remove">x</span>
+										<?php echo str_replace('+',' ',$font);?>
+									</div>
+								<?php endforeach;?>
+							<?php endif;?>
+							<input type="hidden" id="welocally_font_names_data" name="welocally_font_names_data" value="<?php echo $options['font_names'];?>">
+						</div>
+						<div class="clear"></div>
 						<div class="description"><?php _e( 'These are the is the custom fonts to be loaded.  Add fonts in the format: "Dosis|Londrina+Solid|Berkshire+Swash". See all fonts at <a href="http://www.google.com/webfonts#ChoosePlace:select">Google Web Fonts</a>' ); ?></div>
 					</td>			
 				</tr>	
