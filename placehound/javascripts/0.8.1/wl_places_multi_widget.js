@@ -15,6 +15,7 @@ function WELOCALLY_PlacesMultiWidget (cfg) {
 	this._selectedSection;
 	this._infoBox;
 	this._boxText;
+	this._selectedMarkerIndex;
 
 	this.init = function() {
 		
@@ -232,6 +233,7 @@ WELOCALLY_PlacesMultiWidget.prototype.addPlaces = function(map, places, placeMar
 		}
 		
 		_instance.addMarker(
+			i,	
 			placeMarkers,
 			map,
 			itemLocation,
@@ -272,6 +274,15 @@ WELOCALLY_PlacesMultiWidget.prototype.addPlaces = function(map, places, placeMar
 			map,
 			bounds.getCenter(),
 			markerIconLocation);
+	
+	//forced to refresh
+	setTimeout(function () {
+     	_instance.refreshMap(bounds.getCenter(), bounds);
+ 	}, 100);
+	
+ 	setTimeout(function () {
+     	_instance.refreshMap(bounds.getCenter(), bounds);
+ 	}, 200);
 	
 	
 };
@@ -363,44 +374,50 @@ WELOCALLY_PlacesMultiWidget.prototype.selectedItemHandler = function(event, ui) 
 	
 	var _instance = null;
 	
+	var marker;
+	var index;
+	
 	if(this.nodeName=='OL'){
 		_instance = event.data.instance;
 		jQuery(_instance._selectedSection).empty();
-		var index = ui.selected.id.replace("wl_places_mutli_selectable_","");
+		index = ui.selected.id.replace("wl_places_mutli_selectable_","");
+		marker = _instance._placeMarkers[index];		
 		_instance._selectedPlace = 
 			_instance._placeMarkers[index].item;
+		
 	} else if(this.nodeName=='MARKER'){
 		_instance = this.instance;
+		marker = this;
+		index = marker.index;
 		jQuery(_instance._selectedSection).empty();
-		jQuery('#wl_placefinder_selectable').find('li').removeClass('ui-selected');
+		jQuery('#wl_places_mutli_selectable_'+_instance._selectedMarkerIndex).removeClass('ui-selected');
+		
+		jQuery('#wl_places_mutli_selectable_'+index).addClass('ui-selected');
+			
 		_instance._selectedPlace = 
-			this.item;
-		
-		//should probably do this
-		this.map.panTo(this.position);
-		
-		//lets do this the jquery way	
-		var contents = _instance.makeItemContents(_instance._selectedPlace, 0, false);	
-		jQuery(contents).attr('class','wl_places_multi_infobox');
-		jQuery(contents).css('min-width','100px');
-		jQuery(contents).css('min-height','30px');				
-		jQuery(_instance._boxText).html(contents);
-		 
-		jQuery(_instance._boxText).find('li a img').load(function(){
-			jQuery(_instance._boxText).find('li a').css('background','none').css('padding','0px'); 
-			jQuery(_instance._boxText).css('line-height','5px');
-			jQuery(_instance._boxText).find('ul').css('margin','0px');
-		});
-		
-		_instance._infoBox.setOffset(contents);
-		//_instance._infoBox.show();
-		_instance._infoBox.open(this.map, this);
-		
-		
-		
-		
-		
+			this.item; 
 	}
+	
+	_instance._selectedMarkerIndex = index;
+		
+	//should probably do this
+	marker.map.panTo(marker.position);
+	
+	//lets do this the jquery way	
+	var contents = _instance.makeItemContents(_instance._selectedPlace, 0, false);	
+	jQuery(contents).attr('class','wl_places_multi_infobox');
+	jQuery(contents).css('min-width','100px');
+	jQuery(contents).css('min-height','30px');				
+	jQuery(_instance._boxText).html(contents);
+	 
+	jQuery(_instance._boxText).find('li a img').load(function(){
+		jQuery(_instance._boxText).find('li a').css('background','none').css('padding','0px'); 
+		jQuery(_instance._boxText).css('line-height','5px');
+		jQuery(_instance._boxText).find('ul').css('margin','0px');
+	});
+	
+	_instance._infoBox.setOffset(contents);
+	_instance._infoBox.open(marker.map, marker);
 	
 	if(_instance != null){
 		//broadcast to listeners
@@ -426,7 +443,7 @@ WELOCALLY_PlacesMultiWidget.prototype.resetOverlays=function (location, markersA
 
 };
 
-WELOCALLY_PlacesMultiWidget.prototype.refreshMap = function(searchLocation) {
+WELOCALLY_PlacesMultiWidget.prototype.refreshMap = function(searchLocation, bounds) {
 	var _instance = this;
 	google.maps.event.trigger(_instance._map, 'resize');
 	
@@ -446,6 +463,11 @@ WELOCALLY_PlacesMultiWidget.prototype.refreshMap = function(searchLocation) {
 			_instance._mapStatus, 
 			_instance.makeMapStatus(_instance._map, _instance._placeMarkers) , 
 			'wl_message', false);
+	
+	_instance._map.setCenter(searchLocation);
+	if(bounds != null){
+		_instance._map.fitBounds(bounds);
+	}
 	
 	var listener = google.maps.event.addListener(_instance._map, "tilesloaded", function() {
 
@@ -499,9 +521,10 @@ WELOCALLY_PlacesMultiWidget.prototype.colName = function (n) {
 
 
 
-WELOCALLY_PlacesMultiWidget.prototype.addMarker = function(markersArray, markerMap, location, item, icon) {
+WELOCALLY_PlacesMultiWidget.prototype.addMarker = function(i, markersArray, markerMap, location, item, icon) {
 	var _instance = this;
 	var marker = new google.maps.Marker({
+		index: i,
 	    nodeName: 'MARKER',
 	    instance: this,
 		position: location,

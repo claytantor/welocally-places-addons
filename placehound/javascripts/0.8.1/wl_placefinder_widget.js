@@ -38,13 +38,6 @@ function WELOCALLY_PlaceFinderWidget (cfg) {
 			cfg.imagePath = 'http://placehound.com/images/marker_all_base.png';
 		}
 		
-		if(!cfg.loc){
-			cfg.loc='38.548165_-96.064453';
-		}
-		
-		if(!cfg.zoom){
-			cfg.zoom=4;
-		}
 		
 		if(!cfg.radius){
 			cfg.radius=20;
@@ -73,28 +66,20 @@ function WELOCALLY_PlaceFinderWidget (cfg) {
 	    //location field
 	    this._locationField =
 			jQuery('<input type="text" name="location"/>');
-	    jQuery(wrapper).append('<div>Enter a location to search such as "New York NY". You can even provide a full address for more refined searches.</div>');
+	    jQuery(wrapper).append('<div class="wl_field_description">Enter a location to search such as "New York NY". You can even provide a full address for more refined searches.</div>');
 	    jQuery(this._locationField).attr('class','wl_widget_field wl_placefinder_search_field');
 	    jQuery(this._locationField).bind('change' , {instance: this}, this.locationFieldInputHandler);   
 	    
-	    jQuery(this._locationField).bind('keypress',{instance: this}, this.locationFieldInputHandler);
-	    
-	    	    
-		if(this._cfg.defaultLocation){
-			jQuery(this._locationField).val(this._cfg.defaultLocation);
-			jQuery(this._locationField).trigger('change' , {instance: _instance}, this.locationFieldInputHandler); 
-		}
 	    
 	    jQuery(wrapper).append(this._locationField);
 		
 		//search field
 	    this._searchField =
 			jQuery('<input type="text" name="search" id="wl_finder_search_field"/>');
-		jQuery(wrapper).append('<div>Enter what you are searching for, this can be a type of place like "Restaurant", what they sell like "Pizza", or the name of the place like "Seward Park".</div>');       
+		jQuery(wrapper).append('<div class="wl_field_description">Enter what you are searching for, this can be a type of place like "Restaurant", what they sell like "Pizza", or the name of the place like "Seward Park".</div>');       
 		jQuery(this._searchField).attr('class','wl_widget_field wl_placefinder_search_field');
 		jQuery(this._searchField).bind('change' , {instance: this}, this.searchHandler);  
-		
-		
+			
 		jQuery(wrapper).append(this._searchField);
 		
 		//bind focus
@@ -128,11 +113,18 @@ function WELOCALLY_PlaceFinderWidget (cfg) {
 		this._multiPlacesWidget = 
 			new WELOCALLY_PlacesMultiWidget().initCfg(cfg);
 		
+		
 		//the component wrapper
 		jQuery(wrapper).append(this._multiPlacesWidget.makeWrapper());
 		
 		jQuery(script).parent().before(wrapper);
 		
+		if(this._cfg.defaultLocation){
+			jQuery(this._locationField).val(this._cfg.defaultLocation);
+			jQuery(this._locationField).trigger('change' , {instance: _instance}, this.locationFieldInputHandler); 
+		}
+		
+	
 		return this;
 		
 	};
@@ -212,15 +204,6 @@ WELOCALLY_PlaceFinderWidget.prototype.locationFieldInputHandler = function(event
 			_instance._multiPlacesWidget.refreshMap(_instance._searchLocation);
 			
 						
-			//broadcast to listeners
-			/*if(_instance._cfg.observers != null && _instance._cfg.observers.length>0){
-				jQuery.each(_instance._cfg.observers, function(i,item){
-					if(item instanceof WELOCALLY_DealFinderWidget){
-						item.setLocation(results[0].geometry.location.lat(), results[0].geometry.location.lng());
-					}						
-				});
-			}*/
-						
 			
 		} else {
 			_instance.setStatus(_instance._ajaxStatus, 'Could not geocode:'+status,'wl_warning',false);
@@ -273,14 +256,11 @@ WELOCALLY_PlaceFinderWidget.prototype.searchHandler = function(event) {
 						_instance._multiPlacesWidget.setPlaces(data);						
 					} else {
 						
-						bounds = _instance._multiPlacesWidget._map.getBounds();
-						_instance.setStatus(_instance._ajaxStatus, 'No results were found matching your search.','wl_warning',false);
-						
+						_instance.setStatus(_instance._ajaxStatus, 'No results were found matching your search.','wl_warning',false);						
 						_instance._multiPlacesWidget.refreshMap(_instance._searchLocation);
 					}
 					
-					
-					//_instance._multiPlacesWidget._map.fitBounds(bounds);
+
 					var listener = google.maps.event.addListener(_instance._multiPlacesWidget._map, "idle", function() { 						
 						if (_instance._multiPlacesWidget._map.getZoom() > 17) _instance._multiPlacesWidget._map.setZoom(17); 
 						google.maps.event.removeListener(listener); 

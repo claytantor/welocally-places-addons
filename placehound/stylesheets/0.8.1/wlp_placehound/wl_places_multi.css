@@ -35,9 +35,7 @@
 #wl_places_mutli_selectable .ui-selected { background: #e2e2e2;  }
 #wl_places_mutli_selectable ol {  display: inline; }
 #wl_places_mutli_selectable li { 
-	margin-right: 3px; 
 	margin-bottom: 3px; 
-	text-align:left;
 	padding: 0.4em; 
 	font-size: 0.8em; 
 	border: 1px solid #aaaaaa; 

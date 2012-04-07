@@ -1,17 +1,8 @@
-<?php
-	include (dirname(__FILE__) . "/PlacehoundNetwork.class.php");	
-	include (dirname(__FILE__) . "/PlaceHound.class.php");
-	global $placehoundNetwork, $placeHound;
-	$t =$placeHound->getConfigs(); 
-	$id = $_GET["id"];
-	$placeJson = $placehoundNetwork->wl_do_curl_get($t->apiEndpoint.'/geodb/place/1_0/'.$id.'.json');
-	$place = json_decode($placeJson);
-?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  	<title><?php echo($place[0]->properties->name.' - '.$place[0]->properties->address.' '.$place[0]->properties->city.' '.$place[0]->properties->province); ?></title>
+  	<title>Placehound US Grid For <?php echo($_GET["subcategory"]); ?></title>
   	<META NAME="description" CONTENT="Place Hound is just a simple way to search and share places. powered by Welocally">
   	
   	<link rel="stylesheet" href="stylesheets/placehound.css" type="text/css" />
@@ -48,55 +39,20 @@
 		  </div>		  
       </div>
 	</div>
-	<div class="placehound_title" style="margin-top:20px;">Placehound Place</div>
-	<div class="placehound_title" style="font-size: 1.2em;"><?php echo($place[0]->properties->name.' - '.$place[0]->properties->address.' '.$place[0]->properties->city.' '.$place[0]->properties->province); ?></div>
-	<div class="wl_place_title"><a href="http://placehound.com">Search for More Places</a></div>
+	<div class="placehound_title" style="margin-top:20px;">Placehound US Grid For <?php echo($_GET["subcategory"]); ?></div>
+		<div class="wl_place_title"><a href="http://placehound.com">Search Places</a></div>
 	
-    <div id="main">
-      <script type="text/javascript">
-//<![CDATA[
-           
-        //var place = jQuery.parseJSON( '<?php echo $placeJson ?>;' )
-        var place = <?php echo $placeJson ?>;
-		var cfg = { 
-			id:  place._id, 
-			imagePath: '<?php echo($t->baseUrl); ?>/images/marker_all_base.png',
-			endpoint:'<?php echo($t->apiEndpoint); ?>',	
-			showShare: false
-		};
-			    		
-		var placeWidget = 
-			  new WELOCALLY_PlaceWidget(cfg)
-		  		.init();
-		
-		placeWidget.loadLocal(place[0]);
-       
+    <div id="lnks">
+    <?php 
+    for ($i=23; $i<=48; $i++){
+		for ($j=-133; $j<=-66; $j++){
+			echo('<a href="places.html?q='.urlencode($_GET["subcategory"]).'&loc='.$i.'.0000_'.$j.'.0000&radiusKm=80">'.$i.'_'.$j.'</a> ');
+		}
+	}    
+    ?>
+    </div>
+   
 
-      //]]>
-      </script>
-    </div>
-    <div>
-    	<h2>Talk About <?php echo($place[0]->properties->name); ?></h2>
-		<div id="disqus_thread"></div>
-		<script type="text/javascript">
-		    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-		    var disqus_shortname = 'example'; // required: replace example with your forum shortname
-		
-		    /* * * DON'T EDIT BELOW THIS LINE * * */
-		    (function() {
-		        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-		        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-		        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-		    })();
-		</script>
-		<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-		<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
-    </div>
-    
-    <div>
-    	<h2>Tags</h2>
-    </div>
-    
   </div>
 <script type="text/javascript">
 

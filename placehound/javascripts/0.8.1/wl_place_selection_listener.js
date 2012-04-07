@@ -61,8 +61,9 @@ WELOCALLY_PlaceSelectionListener.prototype.show = function(selectedPlace) {
 	var zoomLevel = this.cfg.zoom;
 	
 	var cfg = {
-    		endpoint:'http://stage.welocally.com',
-    		imagePath: 'http://placehound.com/images',
+    		endpoint:this.cfg.endpoint,
+    		imagePath: this.cfg.imagePath,
+    		placehoundPath: this.cfg.placehoundPath,
     		id: selectedPlace._id,
     		showShare: true,
     		zoom: zoomLevel,

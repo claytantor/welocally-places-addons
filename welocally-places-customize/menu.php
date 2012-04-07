@@ -1,6 +1,13 @@
 <?php 
 function wl_menu_customize_initialize() {
-	wl_add_submenu( 'Welocally Places Options', 'Customize', 'welocally-places-customize-options', 'wl_support_theme_options' );
+	
+
+	if(function_exists('welocally_activate')){
+		wl_add_submenu( 'Welocally Places Options', 'Customize', 'welocally-places-customize-options', 'wl_support_theme_options' );
+	}
+	
+	
+	
 }
 
 add_action( 'admin_menu','wl_menu_customize_initialize',100);
