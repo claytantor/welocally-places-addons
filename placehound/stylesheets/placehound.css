@@ -1,12 +1,9 @@
 /* html */
 body {
-	margin-left: 50px;
-	margin-right: 50px;
-  	padding: 10px;
   	background: #F0E1B1;
-  	/*background-image: url('http://placehound.com/images/bg.png');*/
   	font-family: 'Asap', 'Lucida Grande', Helvetica, Arial, Sans-Serif; 
   	color: #69533C;
+  	
 }
 
 a {
@@ -34,7 +31,7 @@ textarea	{
 }
 
 
-button {
+.pl_button {
    text-align:center;
    border-top: 1px solid #f7d197;
    background: #d6ac65;
@@ -59,12 +56,12 @@ button {
    font-size: 1.4em;
    font-weight: bold;
    }
-button:hover  {
+.pl_button:hover  {
    border-top-color: #b3963e;
    background: #b3963e;
    color: #faea84;
    }
-button:active  {
+.pl_button:active  {
    border-top-color: #5c511b;
    background: #5c511b;
    }
@@ -79,194 +76,55 @@ button:active  {
 .clear-left { clear: left; }
 .logo {  margin-right:15px; width:50px; }
 
+.footer-logo {   }
+
 .placehound_title_area{ 
-	display: inline-block; text-align:left; margin-bottom:15px;
+	display: inline-block; text-align:left; margin-bottom:5px;
 }
 
 .placehound_title{ 
 	font-family: 'Fresca', 'Lucida Grande', Helvetica, Arial, Sans-Serif; 
 	font-size: 2.8em;
 	color: #991B18;
+	line-height: 1.2;
 }
 .placehound_intro{ 
 	font-size: 1.2em;
+	margin-bottom:5px;
 }
 
-.header{ margin-bottom:15px; width: 100%}
+.header{ }
 
 
-/* status */
-.update {  background-color: #BFDFFF; }
-.error {  background-color: #FFBFBF; }
-.warning {  background-color: #FFF3BF; }
-.message {  background-color: #DBDBDB; }
+#footer {
+        position: relative;
+	margin-top: -150px; /* negative value of footer height */
+	height: 150px;
+	clear:both;} 
+	
+.dsq-trackback-url input { width: 80%; font-size: 0.8em; }
 
-
-
-.wl_widget_field {  width:100%; margin-bottom:10px;  }
-.wl_widget_selected {  
-	padding: 10px;
-	width:100%; 
-	margin-bottom:10px; border: 1px solid #aaaaaa; 
-	-webkit-border-radius: 4px;
-   	-moz-border-radius: 4px;
-   	border-radius: 4px; 
-   	background: #F0E8CE;
-}
-.wl_selected_tag { width:100%; padding: 4px; }
-.wl_selected_tag input{ width:95%; font-size: 0.8em; font-family: Fixed, monospace; text-align:center; }
-
-.wl_selected_script { width:100%; padding: 4px; }
-.wl_selected_script textarea{ 
-	margin-bottom: 5px;
-	border: 2px solid #9C744C;
-	-webkit-border-radius: 4px;
-   	-moz-border-radius: 4px;
-   	border-radius: 4px;
-   	padding: 4px;
-   	color: #7D4E1F;
-   	font-weight:bold;
-   	text-align:left;
-	width:95%; 
-	height:90px;
-	font-size: 0.7em; font-family: Fixed, monospace;  }
-
-.wl_selected_name { 
-	font-family: 'Fresca', 'Lucida Grande', Helvetica, Arial, Sans-Serif; 
-	font-size: 1.4em;
-	color: #991B18; }
-.wl_button_holder{ width:100%; margin-bottom:30px; text-align:center; } 
-
-/* ids */
-#main {  margin-top: 10px; }
-#map_canvas { height: 400px; }
-
-/* jqueryui overrides */
-#feedback { font-size: 1.0em; }
-#selectable .ui-selecting { background: #FECA40; }
-#selectable .ui-selected { background: #F39814; color: white; }
-#selectable { list-style-type: none; margin: 0; padding: 0; width: 200px; display: inline; }
-#selectable ol {  display: inline; }
-#selectable li { margin: 3px; padding: 0.4em; font-size: 0.8em; 
-	border: 1px solid #aaaaaa; 
-	display: inline-block; 	
-	-webkit-border-radius: 4px;
-   	-moz-border-radius: 4px;
-   	border-radius: 4px; 
-   	background: #F0E8CE;
-   	}
-
-
-#welocally_deals_widget {
-    width:295px;
-    height:100px;   
-    margin:10px auto;
-    font-size: 1.0em;
-    -webkit-border-radius: 4px;
-   	-moz-border-radius: 4px;
-   	border-radius: 4px; 
-   	background: #F0E8CE;
-   	border:1px solid #9C744C;
-   	
-}
-
-.wl_deal_location { font-size: 0.8em; }
-.wl_deal_summary { font-size: 0.9em; }
-
-
+.footer-section { font-family: 'Fresca', 'Lucida Grande', Helvetica, Arial, Sans-Serif; 
+	font-size: 2.0em;
+	color: #ffffff;
+	line-height: 1.0;
+ }
  
-#wl_deals_slides {
-    overflow:hidden;
-    /* fix ie overflow issue */
-    position:relative;
-    width:290px;
-    height:90px;
-    
+.footer-link-title { font-family: 'Fresca', 'Lucida Grande', Helvetica, Arial, Sans-Serif; 
+	font-size: 1.8em;
+	color: #ffffff;
+	line-height: 1.0;
+	display: inline-block;
+	margin-right: 10px;
 }
  
-/* remove the list styles, width : item width * total items */ 
-#wl_deals_slides ul {
-    position:relative;
-    left:0;
-    top:0;
-    list-style:none;
-    margin:0;
-    padding:0;  
-    width:750px;            
-}
- 
-/* width of the item, in this case I put 250x250x gif */
-#wl_deals_slides li {
-    width:290px;
-    height:90px;   
-    float:left;
-}
+.footer-link { 
+	font-size: 1.0em;
+	color: #ffffff;
+	line-height: 1.0;
+	display: inline-block;
+	margin-right: 10px;
+ }
 
- 
-#wl_deals_slides li img {
-    padding:5px;
-    float:left;
-}
 
-/* Styling for prev and next buttons */
-#buttons {
-    padding:0 0 5px 0;  
-    float:right;
-}
- 
-#buttons a {
-    display:block; 
-    width:31px; 
-    height:32px;
-    text-indent:-999em;
-    float:left;
-    outline:0;
-}
- 
-a#prev {
-    background:url(arrow.gif) 0 -31px no-repeat; 
-}
- 
-a#prev:hover {
-    background:url(arrow.gif) 0 0 no-repeat;
-}
- 
-a#next {
-    background:url(arrow.gif) -32px -31px no-repeat; 
-}
- 
-a#next:hover {
-    background:url(arrow.gif) -32px 0 no-repeat;
-}
- 
-.clear {clear:both}
 
-/* place widget */
-.wl_place_dialog_top {width: 100%; position: absolute;
-top: 3px;
-left: -5px;
-z-index: 100; } 
-.wl_place_dialog_close { float: right; width:32px; height:32px; background:url(../images/closer.png) no-repeat;   }
-
-.welocally_place_widget { 
-	font-sixe: 0.8em;
-	margin-bottom: 20px; 
-	width: 500px; height:430px
-	-webkit-border-radius: 4px;
-   	-moz-border-radius: 4px;
-   	border-radius: 4px; 
-   	background: #F0E8CE;
-   	border:1px solid #9C744C;
-   	padding:5px; }
-   	
-.welocally_place_widget_map_canvas{width: 100%; height:300px}
-
-.wl_place_title { height:15px; font-size:0.8em; position: relative; margin:0px; color:#BAA784; } 
-
-.wl_place_links { display: inline; width:330px; }
-
-.wl_selected_web_link { display: inline-block; width:100px; }
-.wl_selected_driving_link { display: inline-block; width:100px; }
-.wl_selected_embed_link { display: inline-block; width:100px; }
-
-.wl_place_embed_area { margin: 5px auto; display: inline-block;}

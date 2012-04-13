@@ -1,0 +1,13 @@
+body {margin:0}
+html, body {height: 100%;}
+.container {height: 100%;}
+.content{ margin-bottom: 100px;}
+#stickyfooter {
+	position:relative;
+	height: 100px;
+	margin-top: -100px; /* must be the same value as height */
+	clear:both;
+	text-align:center; /* up to you */
+	background:#804D21; /* up to you */
+	color: white;
+}

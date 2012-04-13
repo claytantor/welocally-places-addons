@@ -1,78 +1,21 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+	<?php include (dirname(__FILE__) . "/head.php"); ?>
+	<body>
+		<div class="container">
+			<div class="header span-24 last"><?php include (dirname(__FILE__) . "/header.php"); ?></div>
 <?php
-	include (dirname(__FILE__) . "/PlacehoundNetwork.class.php");	
-	include (dirname(__FILE__) . "/PlaceHound.class.php");
-	global $placehoundNetwork, $placeHound;
-	$t =$placeHound->getConfigs(); 
-	$types = json_decode($placehoundNetwork->wl_do_curl_get($t->apiEndpoint.'/geodb/classifier/1_0/types.json'));
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-  	<title><?php foreach ($types as $type){echo($type.' ');} ?></title>
-  	<META NAME="description" CONTENT="Place Hound is just a simple way to search and share places. powered by Welocally">
-  	
-  	<link rel="stylesheet" href="stylesheets/placehound.css" type="text/css" />
-  	<link rel="stylesheet" href="stylesheets/0.8.1/wlp_placehound/wl_places.css" type="text/css" />
-  	<link rel="stylesheet" href="stylesheets/0.8.1/wlp_placehound/wl_places_place.css" type="text/css" />
-  	
-  	<link href='https://fonts.googleapis.com/css?family=Fresca|Asap' rel='stylesheet' type='text/css'>
-  	
-  	<link rel="icon" type="image/png" href="images/hound_icon.png">  	
-    
-    <script src="javascripts/0.8.1/wl_base.js" type="text/javascript"></script>   
-    <script src="javascripts/0.8.1/wl_place_widget.js" type="text/javascript"></script>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" 
-    	type="text/javascript"></script>
-	<script src=
-		"https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js" type=
-		"text/javascript"></script>
-	<script src="https://maps.google.com/maps/api/js?key=AIzaSyACXX0_pKBA6L0Z2ajyIvh5Bi8h9crGVlg&sensor=true&language=en"
-	  	type="text/javascript"></script>
-</head>
-<body>
-  <div id="container">
-    <div id="header" class="header">   
-      <div style="display:inline">
-		  <div style="display: inline-block;"><a href="index.html"><img src="images/phound02.png" class="logo" /></a></div>
-		  <div class="placehound_title_area">
-				<div class="placehound_title">Place Hound</div>
-				<div class="welocally_link"><a href="http://welocally.com" target="_new"><img src="images/powered-welocally.png"/></a></div>
-				<div style="display: inline; width:200px;">
-					<script type="text/javascript" src="http://openlike.org/v1/openlike.js"></script>
-					<script type="text/javascript">OPENLIKE.Widget({header:''})</script>
-		  		</div>
-		  </div>		  
-      </div>
-	</div>
-	<div class="placehound_title" style="margin-top:20px;">Placehound Types</div>
-		<div class="wl_place_title"><a href="index.html">Search Places</a></div>
-	
-    <div id="main">
-    <?php 
-    
-    foreach ($types as $type){
+$types = json_decode($placehoundNetwork->wl_do_curl_get($t->apiEndpoint.'/geodb/classifier/1_0/types.json'));
+?>			
+			<div class="body span-24 last">
+<?php
+foreach ($types as $type){
 		echo('<a href="categories.html?type='.urlencode($type).'">'.$type.'</a>&nbsp; ');
-    }
-    ?>
-    </div>
-   
+}
+?>
 
-  </div>
-<script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-29987811-1']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>  
-  
-</body>
+			</div>
+		</div>
+		<?php include (dirname(__FILE__) . "/footer.php"); ?>
+	</body>
 </html>

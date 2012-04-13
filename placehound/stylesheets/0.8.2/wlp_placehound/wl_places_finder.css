@@ -1,0 +1,56 @@
+.wl_placefinder_wrapper {
+	width: 98%;
+	text-align:center;   
+   	padding: 4px;  
+   	color: #444444;
+}
+
+.wl_placefinder_wrapper input{ 
+	width: 98%; 
+	
+	border: 1px solid #aaaaaa; 
+	margin-bottom: 10px;
+	margin-top: 0px;
+	-webkit-border-radius: 4px;
+   	-moz-border-radius: 4px;
+   	border-radius: 4px;
+   	padding: 4px;   
+   	text-align: center;}
+
+.wl_finder_search_button_area{ width:100%; margin-bottom:5px; text-align:center; } 
+#wl_finder_search_button {
+   text-align:center;
+   border-top: 1px solid #f7d197;
+   background: #d6ac65;
+   background: -webkit-gradient(linear, left top, left bottom, from(#9c7d3e), to(#d6ac65));
+   background: -webkit-linear-gradient(top, #9c7d3e, #d6ac65);
+   background: -moz-linear-gradient(top, #9c7d3e, #d6ac65);
+   background: -ms-linear-gradient(top, #9c7d3e, #d6ac65);
+   background: -o-linear-gradient(top, #9c7d3e, #d6ac65);
+   padding: 11.5px 23px;
+   -webkit-border-radius: 8px;
+   -moz-border-radius: 8px;
+   border-radius: 8px;
+   -webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   box-shadow: rgba(0,0,0,1) 0 1px 0;
+   text-shadow: rgba(0,0,0,.4) 0 1px 0;
+   color: white;
+   font-size: 19px;
+   text-decoration: none;
+   vertical-align: middle;
+   font-family: 'Fresca', 'Lucida Grande', Helvetica, Arial, Sans-Serif;
+   font-size: 1.4em;
+   font-weight: bold;
+   }
+#wl_finder_search_button:hover {
+   border-top-color: #b3963e;
+   background: #b3963e;
+   color: #faea84;
+   }
+#wl_finder_search_button:active {
+   border-top-color: #5c511b;
+   background: #5c511b;
+   } 
+
+ 
