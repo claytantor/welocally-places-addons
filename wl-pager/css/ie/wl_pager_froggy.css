@@ -1,0 +1,27 @@
+ul.pagination li.details{
+   color:#167A0B;
+}
+ul.pagination li a
+{
+    border:solid 1px;
+    padding:6px 9px 6px 9px;
+}
+ 
+ul.pagination li
+{
+    padding-bottom:1px;
+}
+ 
+ul.pagination li a:hover,
+ul.pagination li a.current
+{   
+    color:#FFFFFF;
+    border-color:#0C5915;
+    background:#039614;
+}
+ul.pagination li a
+{
+    color:#0C5915;
+    border-color:#0C5915;
+    background:#DFF5BF;
+}   
