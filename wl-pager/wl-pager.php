@@ -37,6 +37,7 @@ function wl_pager_activate() {
 		require_once (dirname(__FILE__) . "/WelocallyWPPagination.class.php");	
 		require_once (dirname(__FILE__) . "/menu.php");	
 		global $wlPager;
+		$wlPager->onActivate();
 	}
 }
 
@@ -78,5 +79,8 @@ function wl_pager_getpage() {
 
 require_once (dirname(__FILE__) . "/WelocallyWPPagination.class.php");
 require_once (dirname(__FILE__) . "/menu.php");	
+
+global $wlPager;
+$wlPager->hooks();
 
 ?>
