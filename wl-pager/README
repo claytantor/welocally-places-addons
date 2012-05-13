@@ -3,6 +3,10 @@ Contributors: claytantor
 Tags: database, page, pagination, plugin, wordpress, ajax, SQL
 Stable tag: trunk
 License: WELOCALLY SOFTWARE LICENCE
+Version: 1.1.5
+
+WHAT IS WELOCALLY SHORTCODE PAGINATOR?
+The welocally shortcode paginator is a wordpress plugin intended to make pagination and display of records in your wordpress database possible with just a shortcode and a template of how each record will be displayed. It is AJAX based so users can page through any number of records without refreshing the page. Sortcodes contain the table you would like to display, the fields of the table that will be used in the template, the filter to be used and the template that will be used for each record. 
 
 QUICK START GUIDE
 This quick start guide is intended to be a brief overview of the capabilities of the paginator short code plugin. For a more detailed example with downloadable data and broader use cases got our our online guide

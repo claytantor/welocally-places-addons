@@ -14,7 +14,7 @@ function wl_pager_menu_initialise() {
 	
 	
 	add_contextual_help( $main_slug, __( $main_content ) );	
-	add_filter( 'plugin_action_links', 'wl_add_settings_link', 10, 2 );	
+	add_filter( 'plugin_action_links', 'wl_pager_add_settings_link', 10, 2 );	
 }
 
 add_action( 'admin_menu','wl_pager_menu_initialise' );
@@ -40,7 +40,7 @@ function wl_pager_add_settings_link( $links, $file ) {
 
 function wl_pager_set_plugin_meta( $links, $file ) {
 
-	if ( strpos( $file, 'welocally-places.php' ) !== false ) {
+	if ( strpos( $file, 'wl-pager.php' ) !== false ) {
 		$links = array_merge( $links, array( '<a href="admin.php?page=welocally-pager-general">' . __( 'Options' ) . '</a>' ) );		
 	}
 

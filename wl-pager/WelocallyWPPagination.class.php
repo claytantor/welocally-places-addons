@@ -1,15 +1,13 @@
 <?php
+require_once (dirname(__FILE__) . "/pagination-allowed.php");	
 if (!class_exists('WelocallyWPPagination')) { 
 
 	class WelocallyWPPagination {
-		const VERSION = '1.1.4';
+		const VERSION = '1.1.5';
 		const PAGESIZE = 10;
 		const OPTIONNAME = 'wl_pager_options';
 
 		function __construct() {
-			add_shortcode('wlpager', array ($this,'handleWlPagerShortcode'));			
-			add_action( 'init',	array( $this, 'loadDomainStylesScripts' ) );
-			add_action( 'admin_enqueue_scripts', array( $this, 'loadAdminDomainStylesScripts' ) );
 		}
 		
 		public function loadDomainStylesScripts() {
@@ -19,7 +17,7 @@ if (!class_exists('WelocallyWPPagination')) {
 			wp_enqueue_script('jquery' , 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js');			
 					
 			//welocally
-			wp_enqueue_script('wl_pager', WP_PLUGIN_URL.'/wl-pager/js/wl_pager_wp.js', array('jquery'), WelocallyWPPagination::VERSION);
+			wp_enqueue_script('wl_pager', WP_PLUGIN_URL.'/wl-pager/js/wl_pager_wp.min.js', array('jquery'), WelocallyWPPagination::VERSION);
 			
 			global $wp_styles;
 		
@@ -32,48 +30,23 @@ if (!class_exists('WelocallyWPPagination')) {
 			if(empty($options['theme']))
 				$options['theme'] = 'basic'; 
 
-//			wp_enqueue_style( 'wl_pager_basic',WP_PLUGIN_URL.'/wl-pager/css/wl_pager_basic.css', array(), WelocallyWPPagination::VERSION, 'screen' );
-//			wp_register_style('wl_pager_basic-ie-only', WP_PLUGIN_URL.'/wl-pager/css/ie/wl_pager_basic.css');
-//			$wp_styles->add_data('wl_pager_basic-ie-only', 'conditional', 'IE');
-//			wp_enqueue_style('wl_pager_basic-ie-only');			
-			
-//			wp_enqueue_style( 'wl_pager_sky',WP_PLUGIN_URL.'/wl-pager/css/wl_pager_sky.css', array(), WelocallyWPPagination::VERSION, 'screen' );
-//			wp_register_style('wl_pager_sky-ie-only', WP_PLUGIN_URL.'/wl-pager/css/ie/wl_pager_sky.css');
-//			$wp_styles->add_data('wl_pager_sky-ie-only', 'conditional', 'IE');
-//			wp_enqueue_style('wl_pager_sky-ie-only');
-
-//			wp_enqueue_style( 'wl_pager_froggy',WP_PLUGIN_URL.'/wl-pager/css/wl_pager_froggy.css', array(), WelocallyWPPagination::VERSION, 'screen' );
-//			wp_register_style('wl_pager_froggy-ie-only', WP_PLUGIN_URL.'/wl-pager/css/ie/wl_pager_froggy.css');
-//			$wp_styles->add_data('wl_pager_froggy-ie-only', 'conditional', 'IE');
-//			wp_enqueue_style('wl_pager_froggy-ie-only');
-
-//			wp_enqueue_style( 'wl_pager_santafe',WP_PLUGIN_URL.'/wl-pager/css/wl_pager_santafe.css', array(), WelocallyWPPagination::VERSION, 'screen' );
-//			wp_register_style('wl_pager_santafe-ie-only', WP_PLUGIN_URL.'/wl-pager/css/ie/wl_pager_santafe.css');
-//			$wp_styles->add_data('wl_pager_santafe-ie-only', 'conditional', 'IE');
-//			wp_enqueue_style('wl_pager_santafe-ie-only');
-
 			wp_enqueue_style( 'wl_pager_'.$options['theme'],WP_PLUGIN_URL.'/wl-pager/css/wl_pager_'.$options['theme'].'.css', array(), WelocallyWPPagination::VERSION, 'screen' );
 			wp_register_style('wl_pager_'.$options['theme'].'-ie-only', WP_PLUGIN_URL.'/wl-pager/css/ie/wl_pager_'.$options['theme'].'.css');
 			$wp_styles->add_data('wl_pager_'.$options['theme'].'-ie-only', 'conditional', 'IE');
 			wp_enqueue_style('wl_pager_'.$options['theme'].'-ie-only');
 
-
-						
-						
 		}
 		
 		public function loadAdminDomainStylesScripts() {
 			
 			global $wp_styles;
-			
-					
+								
 			wp_enqueue_style( 'wl_pager_admin',WP_PLUGIN_URL.'/wl-pager/css/wl_pager_admin.css', array(), WelocallyWPPagination::VERSION, 'screen' );
 			wp_register_style('wl_pager_admin-ie-only', WP_PLUGIN_URL.'/wl-pager/css/ie/wl_pager_admin.css');
 			$wp_styles->add_data('wl_pager_admin-ie-only', 'conditional', 'IE');
 			wp_enqueue_style('wl_pager_admin-ie-only');	
 			
 			wp_enqueue_style( 'font-google-carme','http://fonts.googleapis.com/css?family=Carme' );
-			
 			
 		}
 
@@ -146,9 +119,12 @@ if (!class_exists('WelocallyWPPagination')) {
 		}
 		
 		function tableAllowed($tableCheck){
+			global $tables_allowed;
 			$options = $this->getOptions();
 			$tables = explode("," , $options['tables']);
-			foreach($tables as $table){
+			$tables_all = array_merge($tables, $tables_allowed);
+			
+			foreach($tables_all as $table){
 				if(trim($table)==$tableCheck)
 					return true;
 			}
@@ -253,16 +229,22 @@ if (!class_exists('WelocallyWPPagination')) {
 	            $t->filterType = "NUMBER";
 		    else if(preg_match("/\@/", $nv[1]))
 		        $t->filterType = "DATE";
-		    else
-		        $t->filterType = "STRING";
-		    	$t->filterValue = preg_replace("/#|@/", "", $nv[1]);
-		        $t->filterOperator = $operator;
-		        return $t;
+		    else 
+		    	$t->filterType = "STRING";
+		        		        
+		    $t->filterValue = preg_replace("/#|@/", "", $nv[1]);
+		    if($operator == "LIKE"){
+		    	$t->filterValue = "%".$t->filterValue."%";
+		    }
+		    $t->filterOperator = $operator;
+		    return $t;
 		}
 		
 		function findOperatorForPart($part){
-		        if(preg_match("/\=/", $part))
+		    if(preg_match("/\=/", $part))
 		            return "=";
+		    if(preg_match("/\~/", $part))
+		            return "LIKE";        
 		    if(preg_match("/\</", $part))
 		            return "<";
 		    if(preg_match("/\>/", $part))
@@ -290,6 +272,10 @@ if (!class_exists('WelocallyWPPagination')) {
 		}
 		
 		function onActivate(){
+			add_shortcode('wlpager', array ($this,'handleWlPagerShortcode'));			
+			add_action( 'init',	array( $this, 'loadDomainStylesScripts' ) );
+			add_action( 'admin_enqueue_scripts', array( $this, 'loadAdminDomainStylesScripts' ) );
+			
 			
 		}
 		

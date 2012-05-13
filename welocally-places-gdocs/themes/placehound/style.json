@@ -1,0 +1,25 @@
+[
+  {
+	stylers: [
+	  { saturation: -45 }
+	]
+  },{
+	featureType: "road",
+	stylers: [
+	  { hue: "#ff5500" }
+	]
+  },{
+	featureType: "water",
+	stylers: [
+	  { hue: "#ffa200" },
+	  { lightness: -55 }
+	]
+  },{
+	featureType: "poi.park",
+	stylers: [
+	  { hue: "#ffc300" },
+	  { lightness: 14 },
+	  { saturation: 21 }
+	]
+  }
+]

@@ -4,14 +4,13 @@ Plugin Name: Welocally Paginator
 Plugin URI: http://www.welocally.com/wordpress/?page_id=2
 Description: The Welocally Paginator lets you easily paginate any data in your wordpress database and apply each row to a simple template
 Author: Welocally Inc. 
-Version: 1.1.4
+Version: 1.1.5
 Author URI: http://welocally.com
 License: Welocally Software License (included)
 Notes: none
 */
 
 register_activation_hook(__FILE__, 'wl_pager_activate');
-register_deactivation_hook(WP_PLUGIN_DIR.'/wl-pager/wl-pager.php', 'wl_pager_deactivate');
 add_action('wp_ajax_nopriv_getpage', 'wl_pager_getpage');
 add_action('wp_ajax_getpage', 'wl_pager_getpage');
 add_action('wp_ajax_nopriv_get_metadata', 'wl_pager_get_metadata');
@@ -33,7 +32,7 @@ function br_trigger_error($message, $errno) {
 
 function wl_pager_activate() {
 	if (version_compare(PHP_VERSION, "5.1", "<")) {
-		br_trigger_error('Can Not Install Welocally Places, Please Check Requirements', E_USER_ERROR);
+		br_trigger_error('Can Not Install Welocally Pager, Please Check Requirements', E_USER_ERROR);
 	} else {
 		require_once (dirname(__FILE__) . "/WelocallyWPPagination.class.php");	
 		require_once (dirname(__FILE__) . "/menu.php");	
@@ -49,8 +48,6 @@ function wl_pager_get_metadata() {
 	$filter = $_POST['filter'];
 	$orderBy = $_POST['orderBy'];
 	$pagesize = $_POST['pagesize'];
-	
-	
 	
 	echo json_encode($wlPager->getMetadata($table, $fields, $filter, $orderBy, $pagesize));	
 
