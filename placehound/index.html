@@ -17,18 +17,19 @@
 			    
 			//<![CDATA[
 			           
-			        var placeSelected = new WELOCALLY_PlaceWidget({}).init();
+			        var placeSelected = new WELOCALLY_PlaceWidget();
 			        
 				    var cfg = { 
 							id:'finder_1',	
 							showLetters: true,
-							showShare: true,
+							showShare: false,
 							zoom:4, 
 							imagePath: '<?php echo($t->baseUrl); ?>/images/marker_all_base.png',
 							endpoint:'<?php echo($t->apiEndpoint); ?>',
 							baseUrl:'<?php echo($t->baseUrl); ?>',	  		
 					    	showSelection: true,
 					    	observers:[placeSelected],
+					    	placeSelector: placeSelected,
 					    	idLinks: true,
 					    	styles: [
 					    			  {
@@ -58,7 +59,7 @@
 				    };
 				    
 				    var placesFinder = 
-						  new WELOCALLY_PlaceFinderWidget(cfg)
+						  new PLACEHOUND_PlaceFinderWidget(cfg)
 					  		.init();
 			  		
 			      //]]>

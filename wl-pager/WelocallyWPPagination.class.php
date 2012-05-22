@@ -102,7 +102,6 @@ if (!class_exists('WelocallyWPPagination')) {
 			if(!empty($filter))
 				$query = $query.$this->makeFilterSQLFromParts($this->makeFilterFromQuerystring(html_entity_decode ($filter)));
 			
-			syslog(LOG_WARNING,'metadata query:'.$query);
 			
 			$total = $wpdb->get_var( $wpdb->prepare( $query ) );
 			$per_page = $pagesize;

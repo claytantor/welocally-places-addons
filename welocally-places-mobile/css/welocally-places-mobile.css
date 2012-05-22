@@ -1,0 +1,25 @@
+.wl_place_post_content_wrapper { padding: 5px; }
+
+.ui-icon-wl-places-mobile-mapit {
+	background-image: url("../images/mapit_icon.png");
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2) {
+	.ui-icon-wl-places-mobile-mapit {
+		background-image: url("../images/mapit_icon_36.png");
+		background-size: 18px 18px;
+	}
+}
+
+.ui-icon-wl-places-mobile-likeit {
+	background-image: url("../images/likeit_icon.png");
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2) {
+	.ui-icon-wl-places-mobile-likeit {
+		background-image: url("../images/likeit_icon_36.png");
+		background-size: 18px 18px;
+	}
+}
+
+.wl_places_mobile_post_img{ max-width: 100%;  -ms-interpolation-mode: bicubic; }

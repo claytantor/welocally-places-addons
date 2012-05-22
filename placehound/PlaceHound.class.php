@@ -3,7 +3,7 @@ if (!class_exists('PlaceHound')) {
     
     class PlaceHound {
     	
-    	const VERSION = '0.8.2';
+    	const VERSION = '0.8.3';
     	
     	function getConfigs(){
     		return $this->getConfigsForEnvironment(Env::ENV);
@@ -13,7 +13,7 @@ if (!class_exists('PlaceHound')) {
     		$t = new StdClass();
     		if($env == 'DEV'){
     			$t->baseUrl = 'http://gaudi.welocally.com/placehound' ;
-    			$t->apiEndpoint = 'http://gaudi.welocally.com';
+    			$t->apiEndpoint = 'http://stage.welocally.com';
     			$t->googleMapsKey = 'AIzaSyACXX0_pKBA6L0Z2ajyIvh5Bi8h9crGVlg';
     			$t->disqusShortname = 'placehounddev';
     		} else if($env == 'STAGE'){
@@ -23,7 +23,7 @@ if (!class_exists('PlaceHound')) {
     			$t->disqusShortname = 'placehoundstage';
     		} else if($env == 'PROD'){
     			$t->baseUrl = 'http://placehound.com' ;
-    			$t->apiEndpoint = 'https://api.welocally.com';
+    			$t->apiEndpoint = 'http://stage.welocally.com';
     			$t->googleMapsKey = 'AIzaSyACXX0_pKBA6L0Z2ajyIvh5Bi8h9crGVlg';
     			$t->disqusShortname = 'placehound';
     		} 
@@ -34,7 +34,7 @@ if (!class_exists('PlaceHound')) {
     	
     	function curPageURL() {
 		 $pageURL = 'http';
-		 if ($_SERVER["HTTPS"] == "on") {$pageURL .= "s";}
+		 //if ($_SERVER["HTTPS"] == "on") {$pageURL .= "s";}
 		 $pageURL .= "://";
 		 if ($_SERVER["SERVER_PORT"] != "80") {
 		  $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];

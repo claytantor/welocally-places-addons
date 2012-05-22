@@ -37,23 +37,20 @@
 	<link rel="stylesheet" href="stylesheets/placehound.css" type="text/css" />
 	<link rel="stylesheet" href="stylesheets/sticky-footer.css" type="text/css" media="screen">
   	
-  	<link rel="stylesheet" href="stylesheets/<?php echo(PlaceHound::VERSION); ?>/wlp_placehound/wl_places.css" type="text/css" />
-  	<link rel="stylesheet" href="stylesheets/<?php echo(PlaceHound::VERSION); ?>/wlp_placehound/wl_places_place.css" type="text/css" />
-  	<link rel="stylesheet" href="stylesheets/<?php echo(PlaceHound::VERSION); ?>/wlp_placehound/wl_places_finder.css" type="text/css" />
-  	<link rel="stylesheet" href="stylesheets/<?php echo(PlaceHound::VERSION); ?>/wlp_placehound/wl_places_multi.css" type="text/css" />
+  	<link rel="stylesheet" href="stylesheets/wlp_placehound/wl_places.css" type="text/css" />
+  	<link rel="stylesheet" href="stylesheets/wlp_placehound/wl_places_place.css" type="text/css" />
+  	<link rel="stylesheet" href="stylesheets/wlp_placehound/wl_places_finder.css" type="text/css" />
+  	<link rel="stylesheet" href="stylesheets/wlp_placehound/wl_places_multi.css" type="text/css" />
   	 	
   	
   	<link href='https://fonts.googleapis.com/css?family=Fresca|Asap' rel='stylesheet' type='text/css'>
   	<link rel="icon" type="image/png" href="images/hound_icon.png">  	
   	<script src="https://maps.google.com/maps/api/js?key=<?php echo($t->googleMapsKey); ?>&sensor=true&language=en"
 	  	type="text/javascript"></script>
-    <script src="javascripts/<?php echo(PlaceHound::VERSION); ?>/wl_base.js" type="text/javascript"></script>   
-    <script src="javascripts/<?php echo(PlaceHound::VERSION); ?>/wl_place_widget.js" type="text/javascript"></script>
-    <script src="javascripts/<?php echo(PlaceHound::VERSION); ?>/wl_dealfinder_widget.js" type="text/javascript"></script> 
-    <script src="javascripts/<?php echo(PlaceHound::VERSION); ?>/wl_placefinder_widget.js" type="text/javascript"></script>
-    <script src="javascripts/<?php echo(PlaceHound::VERSION); ?>/wl_places_multi_widget.js" type="text/javascript"></script>
-    <script src="javascripts/<?php echo(PlaceHound::VERSION); ?>/wl_infobox.js" type="text/javascript"></script>
-    <script src="javascripts/<?php echo(PlaceHound::VERSION); ?>/wl_place_selection_listener.js" type="text/javascript"></script>
+    <script src="javascripts/base/wl_places_dev_all.js" type="text/javascript"></script>   
+    <script src="javascripts/placehound/placehound_geodb_search.js" type="text/javascript"></script>   
+    <script src="javascripts/placehound/placehound_placefinder_widget.js" type="text/javascript"></script>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" 
     	type="text/javascript"></script>
 	<script src=

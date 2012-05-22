@@ -50,7 +50,7 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-pager-general', '
 <form method="post" action="<?php echo bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-pager-general' ?>">
 
 <span class="wl_options_heading"><?php _e( 'General Settings' ); ?></span>
-<table class="form-table">
+<table class="wl-form-table">
 	<tr valign="top">
 		<th scope="row"><?php _e( 'Theme' ); ?></th>
 		<td>
