@@ -20,7 +20,7 @@
 <div style="width:100%;  margin-left: auto; margin-right: auto;">
 		<div style="margin-right: auto; margin-left: auto; width:600px;">
 		<div class="span-24 last" style="text-align:center; margin-top: 30px;">
-		copyright 2012 - welocally. all facts found on this site are creative commons share alike.
+		v <?php echo PlaceHound::VERSION; ?> copyright 2012 - welocally. all facts found on this site are creative commons share alike.
 		</div>
 		</div>
 </div>

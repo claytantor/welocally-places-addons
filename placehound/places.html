@@ -3,17 +3,23 @@
 <?php include (dirname(__FILE__) . "/head.php"); ?>
 <body>
 <div class="container">
+
+<div class="header"><?php include (dirname(__FILE__) . "/header.php"); ?></div>
 <?php  
 $geturl = $t->apiEndpoint.'/geodb/place/1_0/search.json?q='.urlencode($_GET["q"]).'&loc='.urlencode($_GET["loc"]).'&radiusKm='.urlencode($_GET["radiusKm"]);
-$placesJson = $placehoundNetwork->wl_do_curl_get($geturl);
-$places = json_decode($placesJson);
+$placesResponse = $placehoundNetwork->get_places($t->baseUrl, $geturl);
+$placesJson = $placesResponse->placesJson;
+$places = $placesResponse->places;
 ?>
-<div class="header"><?php include (dirname(__FILE__) . "/header.php"); ?></div>
 <div class="body span-24 last">
 	<div class="placehound_title" style="margin-top:5px; font-size: 1.8em;">Place Results</div>
 	<?php if(count($places)>0): ?>
 	<div>
-		<div id="widget"><script type="text/javascript">
+		<div id="places_widget_map_wrapper"></div>
+		<div id="widget">
+		
+		
+		<script type="text/javascript">
 					//<![CDATA[
 					jQuery(document).ready(function() {
 						jQuery('#wl_places_mutli_selectable li').addClass('span-5');
@@ -26,9 +32,8 @@ $places = json_decode($placesJson);
   						cancel: 'a'
 					});  
 					
-					
-					           
-					var placeSelected = new WELOCALLY_PlaceWidget({}).init();
+								           
+					var placeSelected = new WELOCALLY_PlaceWidget();
 			        
 				    var cfg = { 
 							id:'finder_1',	
@@ -40,7 +45,6 @@ $places = json_decode($placesJson);
 							baseUrl:'<?php echo($t->baseUrl); ?>',	  		
 					    	showSelection: true,
 					    	observers:[placeSelected],
-					    	idLinks: true,
 					    	places: placesJson,
 					    	styles: [
 					    			  {
@@ -70,10 +74,22 @@ $places = json_decode($placesJson);
 				    };
 				    
 				    var placesMulti = 
-						  new WELOCALLY_PlacesMultiWidget(cfg)
-					  		.init(); 
+						  new WELOCALLY_PlacesMultiWidget(); 
+					
+				    placesMulti.initCfg(cfg);
 
-			  		placeSelected.setWrapper(cfg, jQuery(placesMulti._selectedSection));
+					
+					//the component wrapper
+					jQuery('#places_widget_map_wrapper').append(placesMulti.makeWrapper());
+					
+					//the selector
+					placeSelected.initCfg({
+						id: 'wl_selector_place_1',
+						hidePlaceSectionMap: true,
+						imagePath: '<?php echo($t->baseUrl); ?>/images/marker_all_base.png'
+					});
+					placesMulti.getSelectedArea().append(placeSelected.makeWrapper());
+					
 					           
 					           					           
 					//]]>

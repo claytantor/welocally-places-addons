@@ -4,6 +4,29 @@ if (!class_exists('PlacehoundNetwork')) {
     class PlacehoundNetwork {
     	
 		 //-------- GET ------------
+		 
+		 function get_places($baseUrl, $geturl, $headers=null){
+		 	
+		 	//$geturl = $t->apiEndpoint.'/geodb/place/1_0/search.json?q='.urlencode($_GET["q"]).'&loc='.urlencode($_GET["loc"]).'&radiusKm='.urlencode($_GET["radiusKm"]);
+			$t = new StdClass();
+			
+			
+			$rplacesJson = $this->wl_do_curl_get($geturl);
+			$rplaces = json_decode($rplacesJson);
+			print_r(json_decode($rplaces));
+		 	
+		 	$places_new = array();
+		 	foreach ( $rplaces as $place ) {
+		 		$place->properties->titlelink = $baseUrl."/place.html?id=".$place->_id;
+				array_push($places_new,$place);
+			}
+			$t->places = $places_new;
+			$t->placesJson = json_encode($places_new);
+			
+
+			return $t;
+
+		 }
 		
 		function wl_do_curl_get($url, $headers=null){
 			
