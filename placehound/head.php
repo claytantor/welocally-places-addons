@@ -12,7 +12,7 @@
 	
 	if(isset( $_GET["id"])){
 		$id = $_GET["id"];
-		$placeJson = $placehoundNetwork->wl_do_curl_get($t->apiEndpoint.'/geodb/place/1_0/'.$id.'.json');
+		$placeJson = $placehoundNetwork->wl_do_curl_get($t->apiEndpoint.'/geodb/place/3_0/'.$id.'.json');
 		$place = json_decode($placeJson);
 		$meta = $placeHound->getMetaForPlace($place[0]);
 		$title = $place[0]->properties->name.' - '.$place[0]->properties->address.' '.$place[0]->properties->city.' '.$place[0]->properties->province;  

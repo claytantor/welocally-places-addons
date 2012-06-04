@@ -6,7 +6,7 @@
 
 <div class="header"><?php include (dirname(__FILE__) . "/header.php"); ?></div>
 <?php  
-$geturl = $t->apiEndpoint.'/geodb/place/1_0/search.json?q='.urlencode($_GET["q"]).'&loc='.urlencode($_GET["loc"]).'&radiusKm='.urlencode($_GET["radiusKm"]);
+$geturl = $t->apiEndpoint.'/geodb/place/3_0/search.json?q='.urlencode($_GET["q"]).'&loc='.urlencode($_GET["loc"]).'&radiusKm='.urlencode($_GET["radiusKm"]);
 $placesResponse = $placehoundNetwork->get_places($t->baseUrl, $geturl);
 $placesJson = $placesResponse->placesJson;
 $places = $placesResponse->places;

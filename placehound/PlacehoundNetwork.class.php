@@ -7,8 +7,7 @@ if (!class_exists('PlacehoundNetwork')) {
 		 
 		 function get_places($baseUrl, $geturl, $headers=null){
 		 	
-		 	//$geturl = $t->apiEndpoint.'/geodb/place/1_0/search.json?q='.urlencode($_GET["q"]).'&loc='.urlencode($_GET["loc"]).'&radiusKm='.urlencode($_GET["radiusKm"]);
-			$t = new StdClass();
+		 	$t = new StdClass();
 			
 			
 			$rplacesJson = $this->wl_do_curl_get($geturl);

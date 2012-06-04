@@ -20,7 +20,7 @@ function WELOCALLY_GeoDbSearch (cfg) {
 		}
 		
 		if (!cfg.requestPath) {
-			cfg.requestPath = '/geodb/place/1_0/search.json';
+			cfg.requestPath = '/geodb/place/3_0/search.json';
 		}
 				
 		if (!cfg.zoom) {

@@ -1,0 +1,47 @@
+[
+{
+	featureType: "road",
+	stylers: [
+	  { saturation: -27 },
+	  { hue: "#7DC5DB" },
+	  { lightness: -10 }
+	]
+  },{
+	featureType: "water",
+	stylers: [
+	  { saturation: -93 },
+	  { lightness: -18 }
+	]
+  },{
+	featureType: "poi.park",
+	stylers: [
+	  { hue: "#80B6BA" },
+	  { lightness: -10 },
+	  { saturation: -5 }
+	]
+  },{
+		featureType: "road.local",
+		stylers: [
+		  { hue: "#0091ff" },
+		  { invert_lightness: false },
+		  { lightness: 40 },
+		  { saturation: 18 }
+		]
+	  },{
+	featureType: "landscape.man_made",
+	stylers: [
+	  { hue: "#00ddff" }
+	]
+  },{
+	featureType: "poi.school",
+	stylers: [
+	  { hue: "#00ffd5" }
+	]
+  },{
+		featureType: "transit.line",
+		stylers: [
+		  { saturation: -100 },
+		  { lightness: 18 }
+		]
+	  }
+]

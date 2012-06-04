@@ -117,7 +117,7 @@ WELOCALLY_PlaceWidget.prototype.load = function(map_canvas) {
 	
 	if(WELOCALLY.util.startsWith(_instance.cfg.id,"WL_")){			
 		var surl = _instance.cfg.endpoint +
-		'/geodb/place/1_0/'+_instance.cfg.id+'.json?callback=?';
+		'/geodb/place/3_0/'+_instance.cfg.id+'.json?callback=?';
 		
 		
 		jQuery.ajax({

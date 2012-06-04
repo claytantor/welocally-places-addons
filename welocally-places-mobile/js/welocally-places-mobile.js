@@ -18,6 +18,14 @@ WELOCALLY_PlacesMobile.prototype.initCfg = function(cfg) {
 		errors.push("Please provide configuration for the widget");
 		cfg = {};
 	}
+	
+	if (!cfg.units) {
+		cfg.units = 'kilometers';
+	}
+	
+	if (!cfg.dist) {
+		cfg.dist = '100';
+	}
 
 	if (errors.length > 0)
 		return errors;
@@ -30,14 +38,13 @@ WELOCALLY_PlacesMobile.prototype.makeWrapper = function(){
 	var _instance = this;
 	
 	var wrapper = jQuery('<div></div>');
-	
-	this.statusArea = jQuery('<div></div>');
-	this.statusArea.css('display','none');
-	jQuery(wrapper).append(this.statusArea);
 		
-	var postlinks = jQuery('<ul id="wl_places_mobile_postlinks" data-role="listview" data-inset="true" data-filter="true"></ul>');
+	var postlinks = jQuery('<ul class="wl-listview" style="margin-top: 0px; margin-left: 5px; margin-right: 5px; margin-bottom: 5px;" id="wl_places_mobile_postlinks" data-role="listview" data-inset="true" data-filter="true" data-filter-theme="'+_instance.cfg.filterTheme+'"></ul>');
 	jQuery(wrapper).append(postlinks);
-		
+	
+	var listviewStatus = jQuery('<div class="ui-shadow-inset ui-overlay-c wl_places_listview_status" id="wl_listview_results_status" style="display:none"></div>');
+	jQuery(wrapper).append(listviewStatus);
+			
 	this.wrapper = wrapper;
 	return wrapper;
 	
@@ -46,11 +53,20 @@ WELOCALLY_PlacesMobile.prototype.makeWrapper = function(){
 WELOCALLY_PlacesMobile.prototype.getPosts = function(position){
 		
 	var _instance=this; 
+	
+	var units = 'km';
+	if(_instance.cfg.units == 'miles')
+		units = 'mi';
+	
 	var data = {
 			action: 'get_posts',
 			lat: position.coords.latitude,
-			lng: position.coords.longitude
+			lng: position.coords.longitude,
+			units: units,
+			dist: _instance.cfg.dist
 	};
+	
+	jQuery.mobile.showPageLoadingMsg();
 		   
 	_instance.jqxhr = jQuery.ajax({
 	  type: 'POST',		  
@@ -60,11 +76,13 @@ WELOCALLY_PlacesMobile.prototype.getPosts = function(position){
 		_instance.jqxhr = jqXHR;
 	  },
 	  error : function(jqXHR, textStatus, errorThrown) {
-		if(textStatus != 'abort'){
+		  jQuery.mobile.hidePageLoadingMsg();
+		  if(textStatus != 'abort'){
 			WELOCALLY.ui.setStatus(_instance.statusArea,'ERROR : '+textStatus, 'error', false);
-		}		
+		  }		
 	  },		  
 	  success : function(data, textStatus, jqXHR) {
+		jQuery.mobile.hidePageLoadingMsg();
 		if(data != null && data.errors != null) {
 			//WELOCALLY.ui.setStatus(_instance.statusArea,'ERROR:'+WELOCALLY.util.getErrorString(data.errors), 'wl_error', false);
 		} else if(data != null && data.errors != null) {
@@ -73,263 +91,169 @@ WELOCALLY_PlacesMobile.prototype.getPosts = function(position){
 			var items = jQuery.parseJSON(data);
 			jQuery.each(items, function(i,item){
 				var distance = eval(item.rawgeosearchdistance);
-				var itemRow = jQuery('<li style="padding:5px;"></li>');
+				var itemRow = jQuery('<li></li>');
 				
-				var itemLink = jQuery('<a href="#details" data-transition="slide">'+item.post_title+' <span style="font-size:0.75em"> '+distance.toFixed(2)+'km</span></a>');							 
-				jQuery(itemLink).bind('click',{instance: _instance, post_id: item.post_id }, _instance.postClickedHandler);				
+				var itemLink = jQuery('<a id="wl_places_mobile_item_'+item.post_id+'" href="#details?id='+item.post_id+'&wl_id='+wl_base64.encode(item.wl_id)+'" data-transition="slide"></a>');
+				
+				if(item.post_title != item.place_name){
+					jQuery(itemLink).html(item.post_title+'<span class="wl_mobile_place_name">, '+
+							item.place_name+'</span>, <span class="wl_mobile_place_distance"> '+
+							distance.toFixed(2)+units+'</span>');
+				} else {
+					jQuery(itemLink).html(item.post_title+', <span class="wl_mobile_place_distance"> '+
+							distance.toFixed(2)+units+'</span>');
+				}
+				
+				//cats
+				var catgeoriesArea = jQuery('<div class="wl_mobile_place_cats"></div>');				
+				jQuery.each(item.categories, function(i,category){
+					jQuery(catgeoriesArea).append('<div class="wl_mobile_place_cat">'+category+'</div>' );					
+				});
+				jQuery(itemLink).append(catgeoriesArea);
+												
+				jQuery(itemLink).bind('click',{instance: _instance, post_id: item.post_id, wl_id: item.wl_id }, _instance.postClickedHandler);				
 				jQuery(itemRow).append(itemLink);
-				
-//				var itemLink2 = jQuery('<a href="#details" data-role="button" data-transition="slide" data-icon="wl-places-mobile-mapit" data-iconpos="right">Map It</a>');							 
-//				jQuery(itemLink2).bind('click',{instance: _instance, post_id: item.post_id }, _instance.postClickedHandler);				
-//				jQuery(itemRow).append(itemLink2);
 				
 				jQuery(_instance.wrapper).find('#wl_places_mobile_postlinks').append(itemRow);
 			});
 			
+						
 			jQuery(_instance.wrapper).find('#wl_places_mobile_postlinks').listview();
-
+			
+			setTimeout(300,jQuery('#wl_places_mobile_postlinks').listview('refresh'));
+			
+			jQuery(_instance.wrapper).find('#wl_listview_results_status').html('results found: '+items.length+' search area: '+_instance.cfg.dist+' '+_instance.cfg.units);
+			jQuery(_instance.wrapper).find('#wl_listview_results_status').show();
 		}
 	  }
 	});
 	
 };
 
-WELOCALLY_PlacesMobile.prototype.postClickedHandler = function(event,ui) {
-	
-	
-	jQuery.mobile.changePage( "#wl_placepost_details", { transition: "slide"} );
-	
+WELOCALLY_PlacesMobile.prototype.postClickedHandler = function(event,ui) {	
+	jQuery.mobile.showPageLoadingMsg();	
 	var _instance=event.data.instance; 
+	_instance.getPost(event.data.post_id,event.data.wl_id,_instance.setDetailsPage);
+	return false;
+};
+
+//callback for setting details once available
+WELOCALLY_PlacesMobile.prototype.setDetailsPage = function(item, caller) {
+	var _instance=caller;
+	
+	jQuery('#wl_mobile_post_title').html(item.post_title);
+	jQuery('#wl_placepost_details_title').html(item.place.properties.name);
+	
+	jQuery('#wl_place_post_content_wrapper').empty();
+	
+	if(item.featured_image){
+		jQuery('#wl_place_post_content_wrapper').append('<div class="wl_post_img_area"><img class="wl_places_mobile_post_img" src="'+item.featured_image+'"/></div>');
+	}
+	
+		
+	jQuery('#wl_place_post_content_wrapper').append('<div class="ui-shadow-inset ui-overlay-c wl_mobile_post_excerpt">'+item.post_content+'</div>');
+	
+	//post link
+	jQuery('#wl_place_post_btn_post').attr('href',item.permalink); 
+	jQuery('#wl_place_post_btn_post').show();
+	
+	
+	//setup map links
+	jQuery('#wl_place_post_btn_map').unbind();	
+	jQuery('#wl_place_post_btn_map').attr('href','#wl_placepost_map?id='+item.ID+'&wl_id='+wl_base64.encode(item.place._id) ); 			
+										
+	jQuery('#wl_place_post_content_wrapper').addClass('wl_place_post_content');
+	jQuery('#wl_place_post_content_actions').show('slow');
+	
+	//now transition
+	WELOCALLY.ui.setStatus(jQuery('#wl_place_post_content_status'), '','wl_message',true);
+	jQuery.mobile.hidePageLoadingMsg();
+	var wl_id = item.place._id;
+	jQuery.mobile.changePage( "#wl_placepost_details?id="+item.ID+"&wl_id="+wl_base64.encode(wl_id), { transition: "slide"} );	
+};
+
+/**
+ * Separating the click handler from the function that actually gets the post
+ * because we have to go get the post on a back, also we want to manage caching 
+ */
+WELOCALLY_PlacesMobile.prototype.getPost = function(post_id,wl_id,callback) {
+	var _instance=this;
 	var data = {
-			action: 'get_post',
-			post_id: event.data.post_id
+			action: 'get_post_place',
+			post_id: post_id,
+			wl_id: wl_id
 	};
-		   
-	WELOCALLY.ui.setStatus(jQuery('#wl_place_post_content_wrapper'), 'Loading post...','wl_message',true);
 	
 	_instance.jqxhr = jQuery.ajax({
 	  type: 'POST',		  
 	  url: _instance.cfg.ajaxurl,
 	  data: data,
-	  beforeSend: function(jqXHR){
+	  beforeSend: function(jqXHR){ 
 		_instance.jqxhr = jqXHR;
 	  },
 	  error : function(jqXHR, textStatus, errorThrown) {
-		if(textStatus != 'abort'){
-			WELOCALLY.ui.setStatus(_instance.statusArea,'ERROR : '+textStatus, 'error', false);
-		}		
+		  jQuery.mobile.hidePageLoadingMsg();
+		  if(textStatus != 'abort'){
+			WELOCALLY.ui.setStatus(jQuery('#wl_place_post_content_status'),'ERROR : '+textStatus, 'error', false);
+		  }		
 	  },		  
 	  success : function(data, textStatus, jqXHR) {
-		if(data != null && data.errors != null) {
+		  
+		  if(data != null && data.errors != null) {
 			//WELOCALLY.ui.setStatus(_instance.statusArea,'ERROR:'+WELOCALLY.util.getErrorString(data.errors), 'wl_error', false);
-		} else if(data != null && data.errors != null) {
+		  } else if(data != null && data.errors != null) {
 			//WELOCALLY.ui.setStatus(_instance.statusArea,'Could not delete place:'+WELOCALLY.util.getErrorString(data.errors), 'wl_error', false);
-		} else {
+		  } else {
 			var item = jQuery.parseJSON(data);
-			jQuery('#wl_mobile_post_title').html(item.post_title);
-			jQuery('#wl_place_post_content_wrapper').empty();
-			
-			if(item.featured_image){
-				jQuery('#wl_place_post_content_wrapper').append('<div style="text-align:center; width:100%;"><img class="wl_places_mobile_post_img" src="'+item.featured_image+'"/></div>');
-			}
-			
-			jQuery('#wl_place_post_content_wrapper').append(item.post_content);
-			jQuery('#wl_place_post_content_wrapper').addClass('wl_place_post_content');
-			jQuery('#wl_place_post_content_actions').show();
-			
+			callback(item, _instance);
 		}
 	  }
 	});
-	
-	
-	
-		
-	return false;
+};
 
-}
+WELOCALLY_PlacesMobile.prototype.mapClickedHandler = function(event,ui) {
+	jQuery.mobile.showPageLoadingMsg(); 
+	var _instance=event.data.instance; 
+	_instance.getPost(event.data.post_id,event.data.wl_id,_instance.setMapPage);	
+	return false;					
+};
 
+WELOCALLY_PlacesMobile.prototype.setMapPage = function(item,caller) {
+	
+	var _instance=caller; 
+	
+	var placeWidget = new WELOCALLY_PlaceMobile();
+	var placeCfg = {};
+	if(_instance.cfg.styles){
+		placeCfg.styles = _instance.cfg.styles;
+	}
+	
+	if(_instance.cfg.imagePath){
+		placeCfg.imagePath = _instance.cfg.imagePath;
+	}
+	
+	placeWidget.initCfg(placeCfg);
+	var mapCenter = jQuery('<div class="wl_places_mobile_post_map"></div>');
+	jQuery(mapCenter).html(placeWidget.makeWrapper());
+	jQuery('#wl_map_content').html(mapCenter);
+	
+	placeWidget.load(item.place);
+	
+	var latlng = new google.maps.LatLng(
+			item.place.geometry.coordinates[1], 
+			item.place.geometry.coordinates[0]);
+	
+	//forced to refresh
+	setTimeout(function () {
+		placeWidget.refreshMap(latlng);
+ 	}, 1000);
+	
+	jQuery.mobile.hidePageLoadingMsg();
+	var wl_id = item.place._id;
+	jQuery.mobile.changePage( "#wl_placepost_map?id="+item.ID+"&wl_id="+wl_base64.encode(wl_id), { transition: "flip"} );
+	
+};
 
-//
-//
-//WELOCALLY_PlacesMobile.prototype.setPlaceRow = function(i, place, row) {
-//	
-//	jQuery(this.wrapper).find('#wl_placesmgr_searchterm').show();
-//	
-//	
-//	var placeRowContent = jQuery('<div></div>');	
-//	jQuery(placeRowContent).append('<div class="wl_placemgr_place_tag">[welocally id="'+place._id+'" /]</div>');	
-//	
-//	var placeInfo = jQuery('<div class="wl_placemgr_place_info"></div>');
-//
-//	jQuery(placeInfo).append('<div class="place_field">'+place.properties.name+'</div>');
-//	jQuery(placeInfo).append('<div class="place_field">'+place.properties.address+'</div>');
-//	jQuery(placeInfo).append('<div class="place_field">'+place.properties.city+'</div>');
-//	jQuery(placeInfo).append('<div class="place_field">'+place.properties.province+'</div>');
-//	jQuery(placeInfo).append('<div class="place_field">'+place.properties.postcode+'</div>');
-//	if(place.properties.website)
-//		jQuery(placeInfo).append('<div class="place_field">'+place.properties.website+'</div>');
-//	if(place.properties.phone)
-//		jQuery(placeInfo).append('<div class="place_field">'+place.properties.phone+'</div>');
-//	jQuery(placeRowContent).append(placeInfo);
-//	
-//	var actions = jQuery('<div class="wl_placemgr_actions"></div>');
-//	var btnEdit = jQuery('<a class="wl_placemgr_button" href="#">edit</a>');
-//	jQuery(btnEdit).bind('click',{instance: this, place: place, index: i, row: row}, this.editHandler);
-//
-//	var btnDelete = jQuery('<a class="wl_placemgr_button" href="#">delete</a>');
-//	
-//	jQuery(btnDelete).bind('click',{instance: this, place: place, index: i, row: row}, this.deleteDialogHandler);
-//	
-//	jQuery(actions).append(btnEdit);
-//	jQuery(actions).append(btnDelete);		
-//	jQuery(placeRowContent).append(actions);
-//		
-//	jQuery(row).html(placeRowContent);
-//};
-//
-//WELOCALLY_PlacesMobile.prototype.editHandler = function(event,ui) {
-//	var place = event.data.place;
-//	var _instance = event.data.instance;
-//	_instance.addPlaceWidget.savedPlace = null;
-//	_instance.addPlaceWidget.show(place);
-//	jQuery( _instance.addPlaceWrapper).dialog({
-//		title: 'edit place',
-//		minWidth: 600,
-//		modal: true
-//	});	
-//	
-//	jQuery( _instance.addPlaceWrapper).bind('dialogclose',
-//			{instance: _instance, 
-//			widget:_instance.addPlaceWidget, 
-//			index: event.data.index, 
-//			row: jQuery('#wl_placemgr_place_'+event.data.index)}, 
-//			_instance.editDialogClosedHandler);
-//	
-//	return false;
-//		
-//};
-//
-//
-//WELOCALLY_PlacesMobile.prototype.addHandler = function(event,ui) {
-//	var _instance = event.data.instance;
-//	_instance.addPlaceWidget.clearFields();
-//	
-//	jQuery( _instance.addPlaceWrapper).dialog({
-//		title: 'add place',
-//		position: "top",
-//		minWidth: 650,
-//		modal: true
-//	});
-//	
-//	jQuery(_instance.addPlaceWrapper).bind('dialogclose', {
-//		instance : _instance
-//	}, _instance.addDialogClosedHandler);
-//
-//	
-//	return false;
-//		
-//};
-//
-//
-//WELOCALLY_PlacesMobile.prototype.addDialogClosedHandler = function(event,ui) {
-//	var _instance = event.data.instance;
-//	
-//	_instance.pager.getMetadata();	
-//	_instance.pager.load(1);	
-//	
-//	
-//	return false;	
-//};
-//
-//WELOCALLY_PlacesMobile.prototype.editDialogClosedHandler = function(event,ui) {
-//	var _instance = event.data.instance;
-//	var place = event.data.widget.savedPlace;
-//	if(place){
-//		var index = event.data.index;
-//		var row = event.data.row;
-//		
-//		_instance.setPlaceRow(index, place, row);
-//	}
-//
-//	jQuery(_instance.statusArea).delay(5000).fadeOut('slow'); 
-//	
-//	return false;	
-//};
-//
-//WELOCALLY_PlacesMobile.prototype.deleteDialogHandler = function(event,ui) {
-//	var _instance = event.data.instance;
-//	jQuery( _instance.deleteDialog).bind('deleteplace',
-//			event.data, 
-//			_instance.deleteHandler);
-//	jQuery( _instance.deleteDialog).html('Please confirm that you would like to delete '+
-//			event.data.place.properties.name+' at '+event.data.place.properties.address+
-//			'. <strong>This action can not be undone.</strong> You will also need to delete the tag from your post.');
-//	jQuery( _instance.deleteDialog).dialog({
-//		resizable: false,
-//		title: 'Delete '+event.data.place.properties.name+'?',
-//		width: 400,
-//		height:200,
-//		modal: true,
-//		buttons: {
-//			"Delete": function() {				
-//				jQuery( _instance.deleteDialog).trigger('deleteplace',
-//						event.data, 
-//						_instance.deleteHandler);
-//				jQuery( this ).dialog( "close" );
-//			},
-//			Cancel: function() {
-//				jQuery( this ).dialog( "close" );
-//			}
-//		}
-//	});	
-//
-//
-//	
-//};
-//
-//WELOCALLY_PlacesMobile.prototype.deleteHandler = function(event,ui) {
-//	var _instance = event.data.instance;
-//	WELOCALLY.ui.setStatus(_instance.statusArea,'Deleting Place...', 'wl_message', true);
-//	
-//	var data = {
-//			action: 'delete_place',
-//			id: event.data.index,
-//			wl_id: event.data.place._id
-//	};
-//		   
-//	_instance.jqxhr = jQuery.ajax({
-//	  type: 'POST',		  
-//	  url: ajaxurl,
-//	  data: data,
-//	  beforeSend: function(jqXHR){
-//		_instance.jqxhr = jqXHR;
-//	  },
-//	  error : function(jqXHR, textStatus, errorThrown) {
-//		if(textStatus != 'abort'){
-//			WELOCALLY.ui.setStatus(_instance.statusArea,'ERROR : '+textStatus, 'error', false);
-//		}		
-//	  },		  
-//	  success : function(data, textStatus, jqXHR) {
-//		if(data != null && data.errors != null) {
-//			WELOCALLY.ui.setStatus(_instance.statusArea,'ERROR:'+WELOCALLY.util.getErrorString(data.errors), 'wl_error', false);
-//		} else if(data != null && data.errors != null) {
-//			WELOCALLY.ui.setStatus(_instance.statusArea,'Could not delete place:'+WELOCALLY.util.getErrorString(data.errors), 'wl_error', false);
-//		} else {
-//			WELOCALLY.ui.setStatus(_instance.statusArea,'Your place has been deleted!', 'wl_message', false);
-//			jQuery('#wl_placemgr_place_'+event.data.index).hide();
-//			jQuery('#wl_placemgr_place_'+event.data.index).html('Deleted.');
-//			jQuery('#wl_placemgr_place_'+event.data.index).show('slow');
-//			jQuery(_instance.statusArea).delay(5000).fadeOut('slow'); 
-//			
-//		}
-//	  }
-//	});
-//	
-//	
-//	
-//	return false;
-//	
-//};
 
 
 

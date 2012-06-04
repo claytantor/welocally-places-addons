@@ -1,0 +1,123 @@
+
+.wl_places_place_wrapper{
+}
+
+
+/* overall style for the widget */
+.welocally_place_widget { 
+	font-family: 'Carme', verdana, arial, helvetica, sans-serif;
+	color: #666;
+	font-size: 0.8em;
+	margin-bottom: 5px; 
+	width: 98%; 
+	-webkit-border-radius: 4px;
+   	-moz-border-radius: 4px;
+   	border-radius: 4px; 
+   	background: #f2f2f2;
+   	border:1px solid #999;
+   	padding:0px; }
+   	
+.wl_places_place {  
+	padding: 10px;
+	margin-bottom:10px; border: 1px solid #aaaaaa; 
+	-webkit-border-radius: 4px;
+   	-moz-border-radius: 4px;
+   	border-radius: 4px; 
+   	background: #fafafa;
+}
+
+.wl_places_place_tag {  width:100%; padding: 4px; }
+.wl_places_place_tag input{ 
+	margin-bottom: 5px;
+	border: 1px solid #9c9c9c;
+	-webkit-border-radius: 4px;
+   	-moz-border-radius: 4px;
+   	border-radius: 4px;
+   	padding: 4px;
+   	color: #7d7d7d;
+   	font-weight:bold;
+   	text-align:left;
+	width:95%; 
+	font-weight:bold;
+	font-size: 1.0em;
+	font-family: Fixed, monospace;	
+}
+
+.wl_places_place_script { width:100%; padding: 4px; display:none }
+.wl_places_place_script textarea{ 
+	border: 1px solid #9c9c9c;
+	-webkit-border-radius: 4px;
+   	-moz-border-radius: 4px;
+   	border-radius: 4px;
+   	padding: 4px;
+   	color: #7d7d7d;
+   	font-weight:bold;
+   	text-align:left;
+	width:95%; 
+	height:90px;
+	font-weight:bold;
+	font-size: 0.8em;
+	font-family: Fixed, monospace;  }
+
+.wl_places_place_name { 
+	font-size: 1.4em;
+	font-weight:bold;}
+	
+.wl_places_place_adress {
+	font-size: 1.0em;
+	font-weight:bold;
+}
+
+.wl_places_place_phone {
+}
+	
+
+	
+/* where you set the map size */
+.wl_places_place_map_canvas {
+position: absolute; top: 230px; left: 0; right: 0; bottom:0; z-index: 1; overflow: hidden;
+}
+
+#map_canvas { position: absolute; top: 120px; left: 0; right: 0; bottom:0; z-index: 1; overflow: hidden; }
+
+.wl_places_place_map_canvas img {
+	max-width: none;
+}
+
+
+.wl_places_place_field { 
+	font-size: 1.0em; 
+	font-family: Fixed, monospace; font-weight:bold; text-align:center;
+	margin-top:5px;
+	border: 1px #aaaaaa; 
+	-webkit-border-radius: 4px;
+   	-moz-border-radius: 4px;
+   	border-radius: 4px;
+   	padding: 4px;
+   	color: #7d7d7d;  }
+   	
+.wl_places_listview_status {
+	font-size: 0.75em; 
+	border: 1px; 
+	-webkit-border-radius: 4px;
+   	-moz-border-radius: 4px;
+   	border-radius: 4px;
+   	padding: 3px;
+   	text-align: center;
+   	font-style: italic;
+}
+
+.wl_user_info{
+	width: 100%;
+	font-size: 0.65em; 
+   	text-align: center;
+}
+
+.wl_mobile_post_excerpt{
+	border: 1px; 
+	-webkit-border-radius: 4px;
+   	-moz-border-radius: 4px;
+   	border-radius: 4px;
+   	padding: 3px;
+   	text-align: left;
+}

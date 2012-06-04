@@ -1,0 +1,37 @@
+[
+  {
+    stylers: [
+      { saturation: -30 }
+    ]
+  },{
+    featureType: "road",
+    stylers: [
+      { hue: "#ff2200" }
+    ]
+  },{
+    featureType: "poi.park",
+    stylers: [
+      { hue: "#ffd500" }
+    ]
+  },{
+    featureType: "poi",
+    stylers: [
+      { lightness: -25 },
+      { hue: "#ffd500" },
+      { saturation: 19 }
+    ]
+  },{
+    featureType: "water",
+    stylers: [
+      { hue: "#ff1a00" },
+      { lightness: -42 }
+    ]
+  },{
+    featureType: "transit",
+    stylers: [
+      { lightness: 15 },
+      { hue: "#ffcc00" },
+      { saturation: 35 }
+    ]
+  }
+]

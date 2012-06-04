@@ -1263,7 +1263,7 @@ WELOCALLY_PlaceWidget.prototype.initCfg = function(cfg) {
 	
 	// hostname (optional) - the name of the host to use
 	if (!cfg.requestPath) {
-		cfg.requestPath = '/geodb/place/1_0/';
+		cfg.requestPath = '/geodb/place/3_0/';
 	}
 	
 	if (!cfg.imagePath) {

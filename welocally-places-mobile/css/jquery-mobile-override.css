@@ -1,0 +1,13 @@
+.ui-listview-filter-inset {
+	margin: -5px -5px 5px -5px;
+}
+
+.ui-content { padding: 5px; margin: 0px auto; } 
+
+.ui-listview-inset .ui-listview-inset {
+margin-top: 0px;
+margin-left: 5px;
+margin-right: 5px;
+margin-bottom: 5px;
+}
+

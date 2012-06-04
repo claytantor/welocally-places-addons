@@ -1,25 +1,249 @@
-.wl_place_post_content_wrapper { padding: 5px; }
+
+/* status */
+.wl_update { 
+	font-size:0.8em;
+	text-align:center; 
+	margin-bottom:10px; border: 1px solid #aaaaaa; 
+	background-color: #BFDFFF;
+	-webkit-border-radius: 4px;
+   	-moz-border-radius: 4px;
+   	border-radius: 4px;
+   	padding: 4px;
+   	color: #415E7A; 
+ }
+.wl_error {  
+	display: none;
+	font-size:0.8em;
+	text-align:center; 
+	background-color: #FFBFBF;
+	margin-bottom:10px; border: 1px solid #9E2626; 
+	-webkit-border-radius: 4px;
+   	-moz-border-radius: 4px;
+   	border-radius: 4px;
+   	padding: 4px; 
+   	color: #9E2626;
+}
+.wl_error a{  
+   	color: #9E2626;
+}
+
+.wl_warning {  
+	font-size:0.8em;
+	text-align:center; 
+	background-color: #FFF3BF; 
+	margin-bottom:10px; 
+	border: 1px solid #aaaaaa; 
+	-webkit-border-radius: 4px;
+   	-moz-border-radius: 4px;
+   	border-radius: 4px;
+   	padding: 4px; 
+   	color: #A68F2B;
+ }
+ 
+.wl_message {
+	font-size:0.8em;
+	text-align:center; 
+	margin: 5px auto;  
+	width:98%;
+	background-color: #f2f2f2;
+	margin-bottom:10px; border: 1px solid #aaaaaa; 
+	-webkit-border-radius: 4px;
+   	-moz-border-radius: 4px;
+   	border-radius: 4px;
+   	padding: 4px;  
+   	color: #777;
+}
+
+#wl_home_status{  margin-bottom: 0px; }
+
+#wl_place_post_content_status{  margin-bottom: 0x; }
+
+#wl_map_status{  margin-bottom: 0px; }
+
+.wl_place_post_content_wrapper { padding: 5px; font-size: 0.7em; }
+
+
+
+.ui-icon-wl-places-mobile-post {
+	background-image: url("../images/wl-icons-18-white.png");
+	background-position:0px 50%;
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2) {
+	.ui-icon-wl-places-mobile-post {
+		background-image: url("../images/wl-icons-36-white.png");
+		background-size: 18px 18px;
+		background-position:0px 50%;
+	}
+}
+
 
 .ui-icon-wl-places-mobile-mapit {
-	background-image: url("../images/mapit_icon.png");
+	background-image: url("../images/wl-icons-18-white.png");
+	background-position:-36px 50%;
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2) {
 	.ui-icon-wl-places-mobile-mapit {
-		background-image: url("../images/mapit_icon_36.png");
+		background-image: url("../images/wl-icons-36-white.png");
 		background-size: 18px 18px;
+		background-position:-72px 50%;
 	}
 }
 
 .ui-icon-wl-places-mobile-likeit {
-	background-image: url("../images/likeit_icon.png");
+	background-image: url("../images/wl-icons-18-white.png");
+	background-position:-72px 50%;
 }
+
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2) {
 	.ui-icon-wl-places-mobile-likeit {
-		background-image: url("../images/likeit_icon_36.png");
+		background-image: url("../images/wl-icons-36-white.png");
 		background-size: 18px 18px;
+		background-position:-144px 50%;
 	}
 }
 
-.wl_places_mobile_post_img{ max-width: 100%;  -ms-interpolation-mode: bicubic; }
+.ui-icon-wl-places-mobile-call {
+	background-image: url("../images/wl-icons-18-white.png");
+	background-position:-108px 50%;
+}
+
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2) {
+	.ui-icon-wl-places-mobile-call {
+		background-image: url("../images/wl-icons-36-white.png");
+		background-size: 18px 18px;
+		background-position:-216px 50%;
+	}
+}
+
+.ui-icon-wl-places-mobile-web {
+	background-image: url("../images/wl-icons-18-white.png");
+	background-position:-144px 50%;
+}
+
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2) {
+	.ui-icon-wl-places-mobile-web {
+		background-image: url("../images/wl-icons-36-white.png");
+		background-size: 18px 18px;
+		background-position:-288px 50%;
+	}
+}
+
+.ui-icon-wl-places-mobile-driving {
+	background-image: url("../images/wl-icons-18-white.png");
+	background-position:-180px 50%;
+}
+
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2) {
+	.ui-icon-wl-places-mobile-driving {
+		background-image: url("../images/wl-icons-36-white.png");
+		background-size: 18px 18px;
+		background-position:-360px 50%;
+	}
+}
+
+.wl_mobile_banner { margin: 0px auto; text-align: center; padding: 0px; }
+
+img.wl_mobile_banner_img { width: 100%; height: auto; margin: 0px auto; }
+
+
+
+.wl_places_mobile_post_img{ 
+	max-width: 100%;  
+	max-height: 35%;  
+	-ms-interpolation-mode: bicubic; 
+	height: 35%; 
+	width: auto;}
+	
+.wl_post_img_area {
+	-webkit-border-radius: 6px;
+   	-moz-border-radius: 6px;
+   	border-radius: 6px;
+	padding: 4px;
+	text-align:center; 
+	width:98%; 
+	background-color:#000;
+	margin: 5px auto;
+}
+
+.wl_mobile_place_cats { 
+	display: block; 
+	font-size: 0.6em; 
+	font-weight: normal; 
+}
+.wl_mobile_place_cat { 
+	display: inline-block;
+	-webkit-border-radius: 6px;
+   	-moz-border-radius: 6px;
+   	border-radius: 6px;
+   	padding: 2px;
+   	margin-right: 10px;
+   	color: #444;
+   	background-color: #f2f2f2; 
+   	border: 1px solid #444; 
+ 	
+}
+
+
+
+.wl_places_mobile_post_map{ 
+}
+
+
+
+.wl_places_place_wrapper{
+	-webkit-border-radius: 6px;
+   	-moz-border-radius: 6px;
+   	border-radius: 6px;
+	padding: 4px;
+	text-align:center; 
+	width:100%; 
+	margin: 0px auto;
+}
+	
+#wl_map_content {
+}
+
+.wl_map_actions { font-size: 0.8em; }
+
+.wl_post_actions { font-size: 0.8em; }
+
+.wl_mobile_post_excerpt { font-size: 0.8em; }
+
+.wl-listview {
+margin-top: 0px;
+margin-left: 5px;
+margin-right: 5px;
+margin-bottom: 5px;
+}
+
+
+.wl_error_page_area{	
+	text-align:center; 
+	background-color: #FFBFBF;
+	-webkit-border-radius: 4px;
+   	-moz-border-radius: 4px;
+   	border-radius: 4px;
+   	border: 1px solid #9E2626;
+   	padding: 4px; 
+   	color: #9E2626;
+}
+
+.wl_error_page_title{
+	font-weight:bold;
+	font-size:2.0em;
+}
+
+.wl_error_page_message{
+	font-size: 1.0em;
+}
+
+.wl_error_page_explain {
+	font-size: 0.8em;
+	font-style: italic;	
+}

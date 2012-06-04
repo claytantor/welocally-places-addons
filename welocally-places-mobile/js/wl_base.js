@@ -10,7 +10,8 @@ if (!window.WELOCALLY) {
     		initJQuery: function(){
 		    	if (typeof(jQuery.fn.parseJSON) == "undefined" || typeof(jQuery.parseJSON) != "function") { 
 		
-		    	    //extensions, this is because prior to 1.4 there was no parse json function
+		    	    // extensions, this is because prior to 1.4 there was no
+					// parse json function
 		    		jQuery.extend({
 		    			parseJSON: function( data ) {
 		    				if ( typeof data !== "string" || !data ) {
@@ -51,11 +52,37 @@ if (!window.WELOCALLY) {
     				jQuery(statusArea).hide();
     			}	
     			
+    			
+    		}
+    	},
+    	browser: {   		
+    		setCookie: function (name,value,days) {
+    			if (days) {
+    			        var date = new Date();
+    			        date.setTime(date.getTime()+(days*24*60*60*1000));
+    			        var expires = "; expires="+date.toGMTString();
+    			}
+    			else var expires = "";
+    			document.cookie = name+"="+value+expires+"; path=/";
+    		},
+    		readCookie: function (name) {
+    			var nameEQ = name + "=";
+    			var ca = document.cookie.split(';');
+    			for(var i=0;i < ca.length;i++) {
+    			        var c = ca[i];
+    			        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+    			        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    			}
+    			return null;
+    		},
+    		deleteCookie: function (name) {
+    			setCookie(name,"",-1);
     		}
     	},
     	util: {
     		getErrorString: function(errorModel){
-    			//{"errors":[{"errorMessage":"Please provide the name for your site.","errorCode":104}]}
+    			// {"errors":[{"errorMessage":"Please provide the name for your
+				// site.","errorCode":104}]}
     			var errorString = '';
     			jQuery.each(errorModel, function(i,item){
     				errorString = errorString+(i+1)+'. '+item.errorMessage+' ';
@@ -155,7 +182,8 @@ if (!window.WELOCALLY) {
 				   if ( queryString.length > 0 ) {
 				      // Find the beginning of the string
 				      begin = queryString.indexOf ( parameterName );
-				      // If the parameter name is not found, skip it, otherwise return the value
+				      // If the parameter name is not found, skip it,
+						// otherwise return the value
 				      if ( begin != -1 ) {
 				         // Add the length (integer) to the beginning
 				         begin += parameterName.length;
