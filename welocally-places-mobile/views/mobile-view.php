@@ -41,11 +41,17 @@ $options = $wlPlacesMobile->getOptions();
 	
 	
 	<script type="text/javascript">
+jQuery(document).ready(function() {
+  jQuery.mobile.showPageLoadingMsg();	
+});
 
 jQuery( document ).delegate('#home', 'pageinit', function() {
-	WELOCALLY.util.log('home pageinit:'+window.location.hash);
-	initManager();	
+	
+	
+	
 	jQuery.mobile.showPageLoadingMsg();	
+	
+	initManager();	
 	loadHomePosts();
 	hideAddressBar();
 	
@@ -67,6 +73,11 @@ jQuery( document ).delegate('#home', 'pageinit', function() {
 		return false;
 	});
 	
+	jQuery( '#wl_mobile_reload' ).click(function(event,ui){
+		window.location.reload(true);
+		return false;
+	});
+	
 	 
 });
 
@@ -76,7 +87,6 @@ jQuery(document).bind('#home', 'pagechange',function(event, data){
 
 
 jQuery( document ).delegate('#wl_placepost_details', 'pageinit', function() {
-	WELOCALLY.util.log('wl_placepost_details pageinit:'+window.location.hash);
 	initManager();	
 	jQuery.mobile.showPageLoadingMsg();	
 	if(window.location.hash){
@@ -95,7 +105,6 @@ jQuery(document).bind('#wl_placepost_details', 'pagechange',function(event, data
 });
 
 jQuery( document ).delegate('#wl_placepost_map', 'pageinit', function() {
-	WELOCALLY.util.log('wl_placepost_map pageinit:'+window.location.hash);
 	initManager();	
 	jQuery.mobile.showPageLoadingMsg();	
 	if(window.location.hash){
@@ -137,33 +146,20 @@ function initManager() {
 
 function loadHomePosts() {
 	
-	WELOCALLY.util.log('loadHomePosts:'+window.location.href);
-	
 	var errors = [  'PERMISSION_DENIED', 'POSITION_UNAVAILABLE', 'TIMEOUT' ];
 	
 	if (navigator.geolocation) {
 	    navigator.geolocation.getCurrentPosition(function(position) {
-	    	window.wlPlacesMobile.getPosts(position);		    	    	
+	    	window.wlPlacesMobile.getPosts(position);
+	    	    	    	
 	    }, function(error) {
-	    	    	
-	    	if(error.message){
-	    		jQuery('#wl_error_page_message').html('ERROR: '+error.message);
-	    		jQuery.mobile.changePage( '#wl_error_page',{transition: 'pop', role: 'dialog'}  );	
-	    	} else if(error.code) {
-	    		jQuery('#wl_error_page_message').html('ERROR: '+errors[error.code-1]);
-	    		jQuery.mobile.changePage( '#wl_error_page',{transition: 'pop', role: 'dialog'} );	
-	    	} else {
-	    		jQuery('#wl_error_page_message').html('An error occurred getting location.');
-	    		jQuery.mobile.changePage( '#wl_error_page',{transition: 'pop', role: 'dialog'} );	
-	    	}
-	    	
-	                 
+	    	window.wlPlacesMobile.getPostsByIpAddress('<?php echo $wlPlacesMobile->getRemoteIP() ?>');
+	    		                 
 	    },{timeout:20000});
 	}else{
-		jQuery('#wl_error_page_message').html('Geolocation not supported.');
-		jQuery.mobile.changePage( '#wl_error_page',{transition: 'pop', role: 'dialog'}  );	
-	}	
-									
+		window.wlPlacesMobile.getPostsByIpAddress('<?php echo $wlPlacesMobile->getRemoteIP() ?>');
+	}
+										
 }
 
 function hideAddressBar() {
@@ -187,8 +183,11 @@ function hideAddressBar() {
 			window.scrollTo(0, 1);
 		}
 	}
+	
 	return this;
 }
+
+
 
 </script>
 </head> 
@@ -200,7 +199,6 @@ function hideAddressBar() {
 		<?php elseif($options['header_type'] == 'logo'): ?>
 		<div style="width:100%;text-align:center;"><img src="<?php echo $options['mobile_logo_img']  ; ?>"/></div>
 		<?php endif; ?>
-		<a href="#" id="wl_mobile_disable" data-icon="delete" class="ui-btn-right">Disable</a>
 	</div>
 	<?php if($options['banner_type'] == 'image'): ?>
 	<div id="wl_mobile_banner" class="wl_mobile_banner ui-bar-c">
@@ -208,6 +206,7 @@ function hideAddressBar() {
 	</div>
 	<?php endif; ?>
 	<div data-role="content">
+		<div id="wl_mobile_startup" style="width:100%; text-align:center;"><h3>Aquiring your location...</h3></div>		
 		<div id="wl_home_status" class="wl_mobile_status"></div>	
 		<div id="wl_mobile_wrapper"></div>
 		<div id="wl_user_info" class="wl_user_info">
@@ -219,6 +218,7 @@ function hideAddressBar() {
 		not logged in
 		<?php endif; ?>	
 		</div>
+		<a href="#" id="wl_mobile_disable"  data-role="button" data-icon="delete" data-inline="false" class="ui-btn-right">Disable Mobile View</a>
 	</div>
 </div>
 
@@ -246,7 +246,7 @@ function hideAddressBar() {
 		<div id="wl_map_status"></div>
 		<div id="wl_map_content"></div>	
 		<div id="wl_map_buttons">
-			<a href="#" class="wl_map_actions" id="wl_place_post_btn_call" data-role="button" data-icon="wl-places-mobile-call"  data-inline="false" style="display:none">Call Now</a>
+			<a href="#" class="wl_map_actions call" id="wl_place_post_btn_call" data-role="button" data-icon="wl-places-mobile-call"  data-inline="false" style="display:none">Call Now</a>
 			<a href="#" class="wl_map_actions" id="wl_place_post_btn_web" data-role="button" data-icon="wl-places-mobile-web"  data-inline="false" style="display:none">Website</a>		
 			<a href="#" class="wl_map_actions" id="wl_place_post_btn_directions" data-role="button" data-icon="wl-places-mobile-driving" data-inline="false" style="display:none">Directions</a>
 		</div>		
@@ -258,8 +258,9 @@ function hideAddressBar() {
 		<div class="wl_error_page_area">
 			<div class="wl_error_page_title">There was an error.</div>
 			<div class="wl_error_page_message" id="wl_error_page_message"></div>
-			<div class="wl_error_page_explain">Most errors occur due to a misconfiguration of the mobile browser's location detection settings. Make sure you have enabled location detection for this website. if you have tried to enable location, and cleared the cache and cookies and are still not able to see this website then <strong>disable mobile browsing.</strong></div>
-			<a href="#" id="wl_mobile_disable_error"  data-role="button" data-icon="delete" data-inline="false">Disable Mobile Browsing</a>
+			<div class="wl_error_page_explain" id="wl_error_page_explain"></div>
+			<a href="#" id="wl_mobile_disable_error" data-role="button" data-icon="delete" data-inline="false">Disable Mobile Browsing</a>
+			<a href="#" id="wl_mobile_reload"  data-role="button" data-icon="refresh" data-inline="false">Refresh</a>			
 		</div>	
 	</div>
 </div>

@@ -18,6 +18,7 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-mobile', '
 	$options[ 'header_type' ] = strtolower($_POST[ 'header_type' ]);
 	$options[ 'banner_type' ] = strtolower($_POST[ 'banner_type' ]);
 	$options[ 'allow_users' ] = strtolower($_POST[ 'allow_users' ]);
+	$options[ 'mobile_post_types' ] = strtolower($_POST[ 'mobile_post_types' ]);
 	$options[ 'allowed_user_list' ] = strtolower($_POST[ 'allowed_user_list' ]);
 	$options[ 'google_analytics_account_id' ] = $_POST[ 'google_analytics_account_id' ];
 			
@@ -26,9 +27,6 @@ if ( ( !empty( $_POST ) ) && ( check_admin_referer( 'welocally-places-mobile', '
 	echo '<div class="updated fade"><p><strong>' . __( 'Settings Saved.' ) . 
 		"</strong></p></div>\n";
 		
-	
-	
-	
 }
 
 $theme_prefix = $wlPlacesMobile->pluginUrl."/themes/";
@@ -136,7 +134,7 @@ jQuery(document).ready(function() {
 <form method="post" action="<?php echo bloginfo( 'wpurl' ).'/wp-admin/admin.php?page=welocally-places-mobile' ?>">
 <table class="wl-form-table" style="margin-top:20px;">
 	<tr valign="top">
-		<th scope="row"><?php _e('Mobile Header' ); ?></th>
+		<th scope="row"><?php _e('Header Look and Feel' ); ?></th>
 		<td>
 			<ul>
 				<li><input type="radio" name="header_type" value="title" <?php if($options[ 'header_type' ]=='title') { echo 'checked';} ?>> Blog Title</li>
@@ -151,7 +149,7 @@ jQuery(document).ready(function() {
 		</td>
 	</tr>
 	<tr valign="top">
-		<th scope="row"><?php _e('Mobile Banner' ); ?></th>
+		<th scope="row"><?php _e('Custom Banner' ); ?></th>
 		<td>
 			<ul>
 				<li><input type="radio" name="banner_type" value="none" <?php if($options[ 'banner_type' ]=='none') { echo 'checked';} ?>> No Banner</li>
@@ -166,7 +164,7 @@ jQuery(document).ready(function() {
 		</td>
 	</tr>		
 	<tr valign="top">
-		<th scope="row"><?php _e('Mobile Search Options' ); ?></th>
+		<th scope="row"><?php _e('Geo Search Options' ); ?></th>
 		<td>
 			<ul>
 				<li>Search Units<br/>
@@ -195,11 +193,12 @@ jQuery(document).ready(function() {
 						<option value="500" <?php if($options[ 'results_max' ]=='500') { echo 'selected';} ?>>no limit</option>
 					</select>
 				</li>
+				<li>Post Types (comma separated) <br /><input style="width:400px" type="text" id="mobile_post_types" name="mobile_post_types" value="<?php echo $options[ 'mobile_post_types' ];?>"></li>
 			</ul>
 		</td>
 	</tr>
 	<tr valign="top">
-		<th scope="row"><?php _e('Mobile Themes' ); ?></th>
+		<th scope="row"><?php _e('Theme Control' ); ?></th>
 		<td>
 			<ul>
 				<li>Mobile Theme<br/>

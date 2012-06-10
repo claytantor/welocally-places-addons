@@ -6,8 +6,7 @@ function WELOCALLY_PlacesMobile(cfg) {
 	this.wrapper;
 
 	this.init = function() {
-		return this;
-		
+		return this;		
 	};
 
 };
@@ -39,7 +38,7 @@ WELOCALLY_PlacesMobile.prototype.makeWrapper = function(){
 	
 	var wrapper = jQuery('<div></div>');
 		
-	var postlinks = jQuery('<ul class="wl-listview" style="margin-top: 0px; margin-left: 5px; margin-right: 5px; margin-bottom: 5px;" id="wl_places_mobile_postlinks" data-role="listview" data-inset="true" data-filter="true" data-filter-theme="'+_instance.cfg.filterTheme+'"></ul>');
+	var postlinks = jQuery('<ul class="wl-listview" id="wl_places_mobile_postlinks" data-role="listview" data-inset="true" data-filter="true" data-filter-theme="'+_instance.cfg.filterTheme+'"></ul>');
 	jQuery(wrapper).append(postlinks);
 	
 	var listviewStatus = jQuery('<div class="ui-shadow-inset ui-overlay-c wl_places_listview_status" id="wl_listview_results_status" style="display:none"></div>');
@@ -78,15 +77,24 @@ WELOCALLY_PlacesMobile.prototype.getPosts = function(position){
 	  error : function(jqXHR, textStatus, errorThrown) {
 		  jQuery.mobile.hidePageLoadingMsg();
 		  if(textStatus != 'abort'){
-			WELOCALLY.ui.setStatus(_instance.statusArea,'ERROR : '+textStatus, 'error', false);
+			  jQuery('#wl_error_page_message').html('ERROR: There is a problem: '+textStatus+' Please try again.');			
+			  jQuery('#wl_error_page_explain').html('You probably just need to wait a little while and reload, but if you have waited long enough and still have problems <strong>disable mobile browsing.</strong>' );		 		
+	          jQuery.mobile.changePage( '#wl_error_page',{transition: 'pop', role: 'dialog'}  );
 		  }		
 	  },		  
 	  success : function(data, textStatus, jqXHR) {
-		jQuery.mobile.hidePageLoadingMsg();
-		if(data != null && data.errors != null) {
-			//WELOCALLY.ui.setStatus(_instance.statusArea,'ERROR:'+WELOCALLY.util.getErrorString(data.errors), 'wl_error', false);
+		jQuery( '#wl_mobile_startup' ).remove();
+		
+		if(data -1) {
+			jQuery('#wl_error_page_message').html('ERROR: There is a problem with the request. Please try again.');			
+			jQuery('#wl_error_page_explain').html('You probably just need to wait a little while and reload, but if you have waited long enough and still have problems <strong>disable mobile browsing.</strong>' );		 		
+    		jQuery.mobile.changePage( '#wl_error_page',{transition: 'pop', role: 'dialog'}  );
+			
 		} else if(data != null && data.errors != null) {
-			//WELOCALLY.ui.setStatus(_instance.statusArea,'Could not delete place:'+WELOCALLY.util.getErrorString(data.errors), 'wl_error', false);
+			jQuery('#wl_error_page_message').html('ERROR:'+WELOCALLY.util.getErrorString(data.errors));	
+			jQuery('#wl_error_page_explain').html('You probably just need to wait a little while and reload, but if you have waited long enough and still have problems <strong>disable mobile browsing.</strong>' );		 		
+    		jQuery.mobile.changePage( '#wl_error_page',{transition: 'pop', role: 'dialog'}  );
+			
 		} else {
 			var items = jQuery.parseJSON(data);
 			jQuery.each(items, function(i,item){
@@ -95,17 +103,19 @@ WELOCALLY_PlacesMobile.prototype.getPosts = function(position){
 				
 				var itemLink = jQuery('<a id="wl_places_mobile_item_'+item.post_id+'" href="#details?id='+item.post_id+'&wl_id='+wl_base64.encode(item.wl_id)+'" data-transition="slide"></a>');
 				
+				var place_name = _instance.ellipsise(item.place_name, 26, 'end', '...')
+				jQuery(itemLink).html('<span class="wl_mobile_place_name">'+place_name+'</span>, <span class="wl_mobile_place_distance"> '+
+						distance.toFixed(2)+units+'</span>');
+				
+				//title
+				var titleArea = jQuery('<div class="wl_mobile_place_info"></div>');				
 				if(item.post_title != item.place_name){
-					jQuery(itemLink).html(item.post_title+'<span class="wl_mobile_place_name">, '+
-							item.place_name+'</span>, <span class="wl_mobile_place_distance"> '+
-							distance.toFixed(2)+units+'</span>');
-				} else {
-					jQuery(itemLink).html(item.post_title+', <span class="wl_mobile_place_distance"> '+
-							distance.toFixed(2)+units+'</span>');
+					jQuery(titleArea).append('<div class="wl_mobile_post_title">'+item.post_title+'</div>' );
 				}
+				jQuery(itemLink).append(titleArea);
 				
 				//cats
-				var catgeoriesArea = jQuery('<div class="wl_mobile_place_cats"></div>');				
+				var catgeoriesArea = jQuery('<div class="wl_mobile_place_info"></div>');				
 				jQuery.each(item.categories, function(i,category){
 					jQuery(catgeoriesArea).append('<div class="wl_mobile_place_cat">'+category+'</div>' );					
 				});
@@ -125,9 +135,74 @@ WELOCALLY_PlacesMobile.prototype.getPosts = function(position){
 			jQuery(_instance.wrapper).find('#wl_listview_results_status').html('results found: '+items.length+' search area: '+_instance.cfg.dist+' '+_instance.cfg.units);
 			jQuery(_instance.wrapper).find('#wl_listview_results_status').show();
 		}
+		jQuery.mobile.hidePageLoadingMsg();
 	  }
 	});
 	
+};
+
+//geocode by ip address
+//http://freegeoip.net/{format}/{ip_or_hostname}
+//http://freegeoip.net/json/google.com?callback=show
+/*
+ * {"city": "Mountain View", 
+ *  "region_code": "CA", "region_name": 
+ *   "California", "metrocode": "807", 
+ *   "zipcode": "94043", 
+ *   "longitude": "-122.057", "country_name": "United States", "country_code": "US", "ip": "209.85.145.147", "latitude": "37.4192"}
+ * 
+ */
+WELOCALLY_PlacesMobile.prototype.getPostsByIpAddress = function(ip_or_hostname) { 
+	
+	var _instance = this;
+	_instance.jqxhr = jQuery.ajax({
+		  type: 'GET',		  
+		  url: 'http://freegeoip.net/json/'+ip_or_hostname+'?callback=?',
+		  dataType: 'jsonp',
+		  beforeSend: function(jqXHR){
+			_instance.jqxhr = jqXHR;
+		  },
+		  error : function(jqXHR, textStatus, errorThrown) {
+			  jQuery.mobile.hidePageLoadingMsg();
+			  if(textStatus != 'abort'){
+				  jQuery('#wl_error_page_message').html('ERROR: There is a problem with the getting the location. Please try again.');			
+				  jQuery('#wl_error_page_explain').html('Most location errors occur due to a misconfiguration of the mobile browser location detection settings. Make sure you have enabled location detection for this website. if you have tried to enable location, and cleared the cache and cookies and are still not able to see this website then <strong>disable mobile browsing.</strong>' );		 		
+		    	  jQuery.mobile.changePage( '#wl_error_page',{transition: 'pop', role: 'dialog'}  );
+			  }		
+		  },		  
+		  success : function(data, textStatus, jqXHR) {
+			  WELOCALLY.ui.setStatus(_instance.statusArea,'FOUND for ip: '+data.ip, 'error', false);
+			  _instance.getPosts({
+					coords: {
+					latitude: eval(data.latitude),
+					longitude: eval(data.longitude)
+				}			
+			});
+		  }
+		});
+	
+	
+};
+
+
+
+//Where is one of ['front','middle','end'] -- default is 'end'
+WELOCALLY_PlacesMobile.prototype.ellipsise = function(orig, toLength, where, ellipsis) { 
+	if (toLength < 1) return orig;
+	ellipsis = ellipsis || '\u2026';
+	if (orig.length < toLength) return orig;
+	switch (where) {
+		case 'front':
+			return ellipsis + orig.substr(orig.length - toLength);
+			break;
+		case 'middle':
+			return orig.substr(0, toLength / 2) + ellipsis + orig.substr(orig.length - toLength / 2)
+			break;
+		case 'end':
+		default:
+			return orig.substr(0, toLength) + ellipsis;
+			break;
+	}
 };
 
 WELOCALLY_PlacesMobile.prototype.postClickedHandler = function(event,ui) {	
@@ -194,16 +269,25 @@ WELOCALLY_PlacesMobile.prototype.getPost = function(post_id,wl_id,callback) {
 	  error : function(jqXHR, textStatus, errorThrown) {
 		  jQuery.mobile.hidePageLoadingMsg();
 		  if(textStatus != 'abort'){
+				jQuery('#wl_error_page_message').html('ERROR : '+textStatus+'. Please try again.');			
+				jQuery('#wl_error_page_explain').html('You probably just need to wait a little while and reload, but if you have waited long enough and still have problems <strong>disable mobile browsing.</strong>' );		 		
+	    		jQuery.mobile.changePage( '#wl_error_page',{transition: 'pop', role: 'dialog'}  );
+
 			WELOCALLY.ui.setStatus(jQuery('#wl_place_post_content_status'),'ERROR : '+textStatus, 'error', false);
 		  }		
 	  },		  
-	  success : function(data, textStatus, jqXHR) {
-		  
-		  if(data != null && data.errors != null) {
-			//WELOCALLY.ui.setStatus(_instance.statusArea,'ERROR:'+WELOCALLY.util.getErrorString(data.errors), 'wl_error', false);
-		  } else if(data != null && data.errors != null) {
-			//WELOCALLY.ui.setStatus(_instance.statusArea,'Could not delete place:'+WELOCALLY.util.getErrorString(data.errors), 'wl_error', false);
-		  } else {
+	  success : function(data, textStatus, jqXHR) {		  
+	    if(data -1) {
+			jQuery('#wl_error_page_message').html('ERROR: There is a problem with the request. Please try again.');			
+			jQuery('#wl_error_page_explain').html('You probably just need to wait a little while and reload, but if you have waited long enough and still have problems <strong>disable mobile browsing.</strong>' );		 		
+    		jQuery.mobile.changePage( '#wl_error_page',{transition: 'pop', role: 'dialog'}  );
+			
+		} else if(data != null && data.errors != null) {
+			jQuery('#wl_error_page_message').html('ERROR:'+WELOCALLY.util.getErrorString(data.errors));	
+			jQuery('#wl_error_page_explain').html('You probably just need to wait a little while and reload, but if you have waited long enough and still have problems <strong>disable mobile browsing.</strong>' );		 		
+    		jQuery.mobile.changePage( '#wl_error_page',{transition: 'pop', role: 'dialog'}  );
+			
+		} else {
 			var item = jQuery.parseJSON(data);
 			callback(item, _instance);
 		}

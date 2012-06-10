@@ -38,13 +38,7 @@ if (version_compare(phpversion(), "5.1", ">=")) {
 }
 
 function wl_places_mobile_init() {
-	
-//	if (!isset($_COOKIE['wl_mobile_enabled'])) {
-//        setcookie('wl_mobile_enabled', 'true', strtotime('+30 day'));
-//    }	
-//    
-//    syslog(LOG_WARNING,print_r($_COOKIE,true));
-		
+			
 	if ( !is_admin() ) {
 		
 	}
@@ -65,8 +59,21 @@ function wl_places_mobile_get_posts() {
 		
 	$loc = array('lat'=>$lat,'lng' =>$lng);
 	$options = $wlPlacesMobile->getOptions();
+	
+	//print_r($options[ 'mobile_post_types']);
+	//$placesPosts = $wlPlacesMobile->geoSearch($loc, $dist, $units, intval($options[ 'results_max' ]));
+	//echo json_encode($wlPlacesMobile->geoSearch($loc, $dist, $units, intval($options[ 'results_max' ])));
 
-	echo json_encode($wlPlacesMobile->geoSearch($loc, $dist, $units, intval($options[ 'results_max' ])));
+	echo json_encode(
+		$wlPlacesMobile->geoSearch(
+			$loc, 
+			$dist, 
+			$units, 
+			intval($options[ 'results_max' ]),
+			$options[ 'mobile_post_types']
+		)
+	);
+	
 
 	die(); // this is required to return a proper result	
 		

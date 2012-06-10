@@ -65,85 +65,73 @@
 
 
 .ui-icon-wl-places-mobile-post {
-	background-image: url("../images/wl-icons-18-white.png");
-	background-position:0px 50%;
+	background-image: url("../images/icons_18/wl-icons-18-white_02.png");
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2) {
 	.ui-icon-wl-places-mobile-post {
-		background-image: url("../images/wl-icons-36-white.png");
+		background-image: url("../images/icons_36/wl-icons-36-white_02.png");
 		background-size: 18px 18px;
-		background-position:0px 50%;
 	}
 }
 
 
 .ui-icon-wl-places-mobile-mapit {
-	background-image: url("../images/wl-icons-18-white.png");
-	background-position:-36px 50%;
+	background-image: url("../images/icons_18/wl-icons-18-white_04.png");
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2) {
 	.ui-icon-wl-places-mobile-mapit {
-		background-image: url("../images/wl-icons-36-white.png");
+		background-image: url("../images/icons_36/wl-icons-36-white_04.png");
 		background-size: 18px 18px;
-		background-position:-72px 50%;
 	}
 }
 
 .ui-icon-wl-places-mobile-likeit {
-	background-image: url("../images/wl-icons-18-white.png");
-	background-position:-72px 50%;
+	background-image: url("../images/icons_18/wl-icons-18-white_06.png");
 }
 
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2) {
 	.ui-icon-wl-places-mobile-likeit {
-		background-image: url("../images/wl-icons-36-white.png");
+		background-image: url("../images/icons_36/wl-icons-36-white_06.png");
 		background-size: 18px 18px;
-		background-position:-144px 50%;
 	}
 }
 
 .ui-icon-wl-places-mobile-call {
-	background-image: url("../images/wl-icons-18-white.png");
-	background-position:-108px 50%;
+	background-image: url("../images/icons_18/wl-icons-18-white_08.png");
 }
 
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2) {
 	.ui-icon-wl-places-mobile-call {
-		background-image: url("../images/wl-icons-36-white.png");
+		background-image: url("../images/icons_36/wl-icons-36-white_08.png");
 		background-size: 18px 18px;
-		background-position:-216px 50%;
 	}
 }
 
 .ui-icon-wl-places-mobile-web {
-	background-image: url("../images/wl-icons-18-white.png");
-	background-position:-144px 50%;
+	background-image: url("../images/icons_18/wl-icons-18-white_10.png");
 }
 
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2) {
 	.ui-icon-wl-places-mobile-web {
-		background-image: url("../images/wl-icons-36-white.png");
+		background-image: url("../images/icons_36/wl-icons-36-white_10.png");
 		background-size: 18px 18px;
-		background-position:-288px 50%;
 	}
 }
 
 .ui-icon-wl-places-mobile-driving {
-	background-image: url("../images/wl-icons-18-white.png");
-	background-position:-180px 50%;
+	background-image: url("../images/icons_18/wl-icons-18-white_12.png");
 }
 
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2) {
 	.ui-icon-wl-places-mobile-driving {
-		background-image: url("../images/wl-icons-36-white.png");
+		background-image: url("../images/icons_36/wl-icons-36-white_12.png");
 		background-size: 18px 18px;
-		background-position:-360px 50%;
 	}
 }
 
@@ -171,18 +159,37 @@ img.wl_mobile_banner_img { width: 100%; height: auto; margin: 0px auto; }
 	margin: 5px auto;
 }
 
-.wl_mobile_place_cats { 
-	display: block; 
-	font-size: 0.6em; 
+.wl_mobile_place_info { 
+	display: block; 	
 	font-weight: normal; 
 }
+
+.wl_mobile_place_name{
+	font-size: 0.9em;
+	font-weight: bold;  
+}
+
+.wl_mobile_place_distance{
+	font-size: 0.8em;
+}
+
+.wl_mobile_post_title { 
+	display: inline-block;
+	font-style:italic;
+   	padding: 2px;
+   	margin-right: 5px;
+	font-size: 0.75em; 
+ 	
+}
+
 .wl_mobile_place_cat { 
+	font-size: 0.6em; 
 	display: inline-block;
 	-webkit-border-radius: 6px;
    	-moz-border-radius: 6px;
    	border-radius: 6px;
    	padding: 2px;
-   	margin-right: 10px;
+   	margin-right: 3px;
    	color: #444;
    	background-color: #f2f2f2; 
    	border: 1px solid #444; 

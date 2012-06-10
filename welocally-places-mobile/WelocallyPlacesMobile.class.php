@@ -27,6 +27,58 @@ if (!class_exists('WelocallyPlacesMobile')) {
 			
 		}
 		
+		function getRemoteIP ()
+		{
+		  
+		    // check to see whether the user is behind a proxy - if so,
+		    // we need to use the HTTP_X_FORWARDED_FOR address (assuming it's available)
+		
+		    if (strlen($_SERVER["HTTP_X_FORWARDED_FOR"]) > 0) { 
+		
+		      // this address has been provided, so we should probably use it
+		
+		      $f = $_SERVER["HTTP_X_FORWARDED_FOR"];
+		
+		      // however, before we're sure, we should check whether it is within a range 
+		      // reserved for internal use (see http://tools.ietf.org/html/rfc1918)- if so 
+		      // it's useless to us and we might as well use the address from REMOTE_ADDR
+		
+		      $reserved = false;
+		
+		      // check reserved range 10.0.0.0 - 10.255.255.255
+		      if (substr($f, 0, 3) == "10.") {
+		        $reserved = true;
+		      }
+		
+		      // check reserved range 172.16.0.0 - 172.31.255.255
+		      if (substr($f, 0, 4) == "172." && substr($f, 4, 2) > 15 && substr($f, 4, 2) < 32) {
+		        $reserved = true;
+		      }
+		
+		      // check reserved range 192.168.0.0 - 192.168.255.255
+		      if (substr($f, 0, 8) == "192.168.") {
+		        $reserved = true;
+		      }
+		
+		      // now we know whether this address is any use or not
+		      if (!$reserved) {
+		        $ip = $f;
+		      }
+		
+		    } 
+		
+		    // if we didn't successfully get an IP address from the above, we'll have to use
+		    // the one supplied in REMOTE_ADDR
+		
+		    if (!isset($ip)) {
+		      $ip = $_SERVER["REMOTE_ADDR"];
+		    }
+		
+		    // done!
+		    return $ip;
+		
+		}
+		
 		public function detectMobile() {
 			
 			$container = $_SERVER['HTTP_USER_AGENT'];
@@ -65,8 +117,9 @@ if (!class_exists('WelocallyPlacesMobile')) {
 		 * 
 		 * 1 LAT/LNG = 111KM = 68.9722023 mi
 		 */
-		public function geoSearch($loc, $dist, $units='km', $max=10){
+		public function geoSearch($loc, $dist, $units='km', $max=10, $post_type='post'){
 			global $wpdb,$wlPlaces;
+			
 			
 			//units
 			$r= 6366.56;
@@ -75,12 +128,22 @@ if (!class_exists('WelocallyPlacesMobile')) {
 				$r= 3956.00;
 				$cvrt = 69;
 			}
+			
+			$post_type = explode(",",$post_type);
+
+			$post_type_and = '1=1';
+			if (is_array($post_type) && !empty($post_type)) {
+				$post_type_and = "{$wpdb->posts}.post_type IN ('" . implode('\',\'', $post_type) . "')";
+			} elseif (is_string($post_type)) {
+				$post_type_and = "{$wpdb->posts}.post_type = '" . $wpdb->escape($post_type) . "'";
+			}
 				
 			$lng1 = $loc['lng']-$dist/abs(cos(deg2rad($loc['lat']))*$cvrt);
 			$lng2 = $loc['lng']+$dist/abs(cos(deg2rad($loc['lat']))*$cvrt);
 			$lat1 = $loc['lat']-($dist/$cvrt);
 			$lat2 = $loc['lat']+($dist/$cvrt);
 						
+			//"AND ".$wpdb->prefix."posts.post_status = 'publish' AND " . $post_type_and . 
 			//this is a pretty complex query, we try to make it as fast as possible by making
 			//a bounding though, alas this is the best way to do geo, maybe index the lat,lng fields?
 			$querygeo = sprintf("SELECT ".
@@ -96,7 +159,8 @@ if (!class_exists('WelocallyPlacesMobile')) {
 			  "POWER(SIN((lng - %s) * pi()/180 / 2), 2) )) rawgeosearchdistance ".  
 			  "FROM ".$wpdb->prefix."wl_places,".$wpdb->prefix."wl_places_posts,".$wpdb->prefix."posts " .
 			  "WHERE ".$wpdb->prefix."wl_places_posts.place_id = ".$wpdb->prefix."wl_places.id ".   
-			  "AND ".$wpdb->prefix."wl_places_posts.post_id = ".$wpdb->prefix."posts.ID ".   
+			  "AND ".$wpdb->prefix."wl_places_posts.post_id = ".$wpdb->prefix."posts.ID ". 
+			  "AND ".$wpdb->prefix."posts.post_status = 'publish' AND " . $post_type_and .  
 			  "AND ( lat between %s and %s ) ".  
 			  "AND ( lng between %s and %s ) ".  
 			  "HAVING rawgeosearchdistance < %s ". 
@@ -111,8 +175,9 @@ if (!class_exists('WelocallyPlacesMobile')) {
 			  	$lng2,
 			  	$dist,
 			  	$max); 
-		
-			  								
+			  	
+			syslog(LOG_WARNING,print_r($querygeo,true));
+					  								
 			$results = $wpdb->get_results($querygeo, OBJECT);
 			foreach ( $results as $post ) {
        			//$post->permalink = get_permalink( $post->post_id );
@@ -295,9 +360,7 @@ if (!class_exists('WelocallyPlacesMobile')) {
 					'/mapstyle.json';				
 				if (file_exists($mapstyle)) {
 					$mapstyle_json = file_get_contents($mapstyle);		    
-				} else {
-					echo 'no style for '.$mapstyle;
-				}
+				} 
 				
 				//custom markers
 				$maps_markers = dirname( __FILE__ ) . '/themes/'.$options['mobile_theme' ].
@@ -359,13 +422,22 @@ if (!class_exists('WelocallyPlacesMobile')) {
 			return array(		
 				"iPhone",  				 
 				"iPod", 			
-				"Android"		
+				"Android",
+				"incognito", 			
+				"webmate", 				
+				"dream", 				 	
+				"CUPCAKE", 			 	
+				"blackberry9500",	 	
+				"blackberry9530",	 	
+				"blackberry9520",	 	
+				"blackberry9550",	 	
+				"blackberry9800",	
+				"Googlebot-Mobile"			
 			);
 		}
 		
 		public function getExcludedUserAgents(){
-			return array(		
-				'CUPCAKE'	
+			return array(			
 			);
 		}
 		
@@ -384,6 +456,7 @@ if (!class_exists('WelocallyPlacesMobile')) {
             $default_header_type = 'title';
             $default_banner_type = 'none';
             $default_allow_users = 'none';
+            $default_mobile_post_types = 'post';
             	
    			//defaults          
             if ( !array_key_exists( 'mobile_theme', $options ) ) { $options[ 'mobile_theme' ] = $default_mobile_theme; $changed = true; }
@@ -396,6 +469,7 @@ if (!class_exists('WelocallyPlacesMobile')) {
             if ( !array_key_exists( 'header_type', $options ) ) { $options[ 'header_type' ] = $default_header_type; $changed = true; }
             if ( !array_key_exists( 'banner_type', $options ) ) { $options[ 'banner_type' ] = $default_banner_type; $changed = true; }
             if ( !array_key_exists( 'allow_users', $options ) ) { $options[ 'allow_users' ] = $default_allow_users; $changed = true; }
+            if ( !array_key_exists( 'mobile_post_types', $options ) ) { $options[ 'mobile_post_types' ] = $default_mobile_post_types; $changed = true; }
             
                       	    	
 			$this->latestOptions = $options;

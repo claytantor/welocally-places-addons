@@ -216,7 +216,8 @@ WELOCALLY_PlaceMobile.prototype.makePlaceContent = function(selectedPlace, cfg) 
 		' '+selectedPlace.properties.postcode+'</div>');
 	
 	if(selectedPlace.properties.phone != null) {
-		jQuery('#wl_place_post_btn_call').attr('href','tel:'+selectedPlace.properties.phone);
+		
+		jQuery('#wl_place_post_btn_call').attr('href','tel:'+selectedPlace.properties.phone.replace(/[^0-9]/g, ''));
 		jQuery('#wl_place_post_btn_call').show();
 		
 	}
