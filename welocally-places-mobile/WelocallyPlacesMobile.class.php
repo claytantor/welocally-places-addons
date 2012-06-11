@@ -3,7 +3,7 @@
 if (!class_exists('WelocallyPlacesMobile')) { 
 
 	class WelocallyPlacesMobile {
-		const VERSION = '1.1.0';
+		const VERSION = '1.1.0.BETA';
 		const OPTIONNAME = 'wl_places_mobile_options';
 
 		function __construct() {

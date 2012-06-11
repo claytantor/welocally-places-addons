@@ -4,7 +4,7 @@
 Plugin Name: Welocally Places Mobile
 Plugin URI: http://www.welocally.com/wordpress/?page_id=2
 Description: The Welocally Places mobile plugin makes your content location aware using welocally places
-Version: 1.1.0
+Version: 1.1.0.BETA
 Author: Welocally  
 Author URI: http://welocally.com
 License: GPL2 
